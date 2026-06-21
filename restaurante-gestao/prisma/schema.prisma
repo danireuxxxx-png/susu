@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+model Funcionario {
+  id          String        @id @default(cuid())
+  nome        String
+  cpf         String        @unique
+  cargo       String
+  departamento String
+  salario     Float
+  dataAdmissao DateTime
+  status      StatusFuncionario @default(ATIVO)
+  telefone    String?
+  email       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  folhaPagamento FolhaPagamento[]
+  metas       MetaFuncionario[]
+
+  @@map("funcionarios")
+}
+
+enum StatusFuncionario {
+  ATIVO
+  INATIVO
+  FERIAS
+  AFASTADO
+}
+
+model FolhaPagamento {
+  id            String      @id @default(cuid())
+  funcionarioId String
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
+  mes           Int
+  ano           Int
+  salarioBase   Float
+  bonus         Float       @default(0)
+  descontos     Float       @default(0)
+  total         Float
+  pago          Boolean     @default(false)
+  dataPagamento DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@map("folha_pagamento")
+}
+
+model Venda {
+  id          String    @id @default(cuid())
+  numero      String    @unique
+  data        DateTime  @default(now())
+  subtotal    Float
+  desconto    Float     @default(0)
+  total       Float
+  formaPagamento FormaPagamento
+  status      StatusVenda @default(PENDENTE)
+  itens       ItemVenda[]
+  createdAt   DateTime  @default(now())
+
+  @@map("vendas")
+}
+
+enum FormaPagamento {
+  DINHEIRO
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  PIX
+  VALE
+}
+
+enum StatusVenda {
+  PENDENTE
+  PAGO
+  CANCELADO
+}
+
+model ItemVenda {
+  id        String  @id @default(cuid())
+  vendaId   String
+  venda     Venda   @relation(fields: [vendaId], references: [id])
+  produtoId String
+  produto   Produto @relation(fields: [produtoId], references: [id])
+  quantidade Int
+  precoUnit Float
+  total     Float
+
+  @@map("itens_venda")
+}
+
+model Produto {
+  id          String     @id @default(cuid())
+  nome        String
+  descricao   String?
+  categoria   String
+  preco       Float
+  custo       Float
+  ativo       Boolean    @default(true)
+  estoque     Int        @default(0)
+  estoqueMin  Int        @default(5)
+  itensVenda  ItemVenda[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("produtos")
+}
+
+model Meta {
+  id          String    @id @default(cuid())
+  titulo      String
+  descricao   String?
+  tipo        TipoMeta
+  valorAlvo   Float
+  valorAtual  Float     @default(0)
+  dataInicio  DateTime
+  dataFim     DateTime
+  status      StatusMeta @default(EM_ANDAMENTO)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  metasFuncionarios MetaFuncionario[]
+
+  @@map("metas")
+}
+
+enum TipoMeta {
+  FATURAMENTO
+  ATENDIMENTOS
+  SATISFACAO
+  REDUCAO_CUSTOS
+  OUTRO
+}
+
+enum StatusMeta {
+  EM_ANDAMENTO
+  CONCLUIDA
+  NAO_ATINGIDA
+  CANCELADA
+}
+
+model MetaFuncionario {
+  id            String      @id @default(cuid())
+  metaId        String
+  meta          Meta        @relation(fields: [metaId], references: [id])
+  funcionarioId String
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
+
+  @@map("metas_funcionarios")
+}
+
+model Despesa {
+  id          String       @id @default(cuid())
+  descricao   String
+  categoria   CategoriaDespesa
+  valor       Float
+  data        DateTime
+  pago        Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+
+  @@map("despesas")
+}
+
+enum CategoriaDespesa {
+  ALUGUEL
+  SALARIOS
+  INSUMOS
+  ENERGIA
+  AGUA
+  MANUTENCAO
+  MARKETING
+  OUTRO
+}
