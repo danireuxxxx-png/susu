@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f7f4ef;
+  --card: #fffdfa;
+  --card2: #f2eee7;
+  --ink: #211c16;
+  --muted: #8b8175;
+  --gold: #b08d4f;
+  --gold2: #d4b878;
+  --goldsoft: rgba(176, 141, 79, 0.12);
+  --line: rgba(33, 28, 22, 0.09);
+  --good: #4d7c5f;
+  --goodbg: rgba(77, 124, 95, 0.1);
+  --bad: #a85d51;
+  --badbg: rgba(168, 93, 81, 0.1);
+  --shadow: 0 1px 2px rgba(33, 28, 22, 0.04), 0 12px 32px -12px rgba(33, 28, 22, 0.1);
+}
+
+:root[data-theme="dark"] {
+  --bg: #151210;
+  --card: #1e1a16;
+  --card2: #26211b;
+  --ink: #f0eae0;
+  --muted: #96897a;
+  --gold: #d4b878;
+  --gold2: #b08d4f;
+  --goldsoft: rgba(212, 184, 120, 0.12);
+  --line: rgba(240, 234, 224, 0.09);
+  --good: #7fb894;
+  --goodbg: rgba(127, 184, 148, 0.12);
+  --bad: #d98d80;
+  --badbg: rgba(217, 141, 128, 0.12);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -12px rgba(0, 0, 0, 0.5);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card2: var(--card2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-gold: var(--gold);
+  --color-gold2: var(--gold2);
+  --color-goldsoft: var(--goldsoft);
+  --color-line: var(--line);
+  --color-good: var(--good);
+  --color-goodbg: var(--goodbg);
+  --color-bad: var(--bad);
+  --color-badbg: var(--badbg);
+  --font-serif: var(--font-cormorant), serif;
+  --font-sans: var(--font-manrope), sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-manrope), sans-serif;
+  transition: background 0.3s, color 0.3s;
+}
+
+a {
+  color: var(--gold);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--gold2);
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(176, 141, 79, 0.35); }
+  100% { box-shadow: 0 0 0 26px rgba(176, 141, 79, 0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.4s ease both;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 5px;
+}
