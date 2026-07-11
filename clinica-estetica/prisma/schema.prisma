@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model Professional {
+  id           String         @id @default(cuid())
+  name         String
+  specialty    String
+  active       Boolean        @default(true)
+  strengths    String?
+  weaknesses   String?
+  insightAt    DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  patients     Patient[]
+  consultations Consultation[]
+
+  @@map("professionals")
+}
+
+enum PatientStatus {
+  ATIVA
+  NOVA
+  EM_RISCO
+}
+
+model Patient {
+  id                String        @id @default(cuid())
+  name              String
+  phone             String
+  age               Int
+  clientSince       DateTime      @default(now())
+  status            PatientStatus @default(NOVA)
+  currentTreatment  String?
+  nextAppointment   DateTime?
+  clinicalNotes     String?
+  aiTip             String?
+  aiTipAt           DateTime?
+  satisfaction      Float?
+  treatmentHistory  String[]      @default([])
+  professionalId    String?
+  professional      Professional? @relation(fields: [professionalId], references: [id])
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  consultations     Consultation[]
+
+  @@map("patients")
+}
+
+model Consultation {
+  id               String       @id @default(cuid())
+  patientId        String
+  patient          Patient      @relation(fields: [patientId], references: [id])
+  professionalId   String
+  professional     Professional @relation(fields: [professionalId], references: [id])
+  treatmentName    String
+  occurredAt       DateTime     @default(now())
+  durationSeconds  Int          @default(0)
+  valueClosed      Float?
+  planSessions     Int?
+  nextSessionAt    DateTime?
+
+  transcript       Json?
+  aiScore          Float?
+  aiSummary        String?
+  subScores        Json?
+  aiFacts          Json?
+  couldSay         Json?
+  avoidSay         Json?
+  speakingBalancePro Float?
+
+  createdAt        DateTime     @default(now())
+
+  @@map("consultations")
+  @@index([professionalId])
+  @@index([patientId])
+  @@index([occurredAt])
+}
