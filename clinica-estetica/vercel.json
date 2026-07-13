@@ -1,4 +1,3 @@
 {
-  "buildCommand": "npx prisma generate && npx prisma migrate deploy && npx tsx prisma/seed.ts && npx next build",
-  "outputDirectory": ".next"
+  "buildCommand": "npx next build"
 }
