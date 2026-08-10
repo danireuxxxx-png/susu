@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  --color-ink: #1c1712;
+  --color-ink-soft: #322922;
+  --color-rice: #faf6ee;
+  --color-rice-dim: #f1ead9;
+  --color-paper: #ffffff;
+  --color-vermillion: #c1442d;
+  --color-vermillion-dark: #9c3220;
+  --color-vermillion-light: #e8735c;
+  --color-gold: #c9a24b;
+  --color-gold-soft: #e6d3a3;
+  --color-matcha: #5b7b5a;
+  --color-matcha-soft: #e4ede2;
+
+  --font-display: var(--font-noto-serif-jp);
+  --font-body: var(--font-inter);
+}
+
+@theme inline {
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-rice: var(--color-rice);
+  --color-rice-dim: var(--color-rice-dim);
+  --color-paper: var(--color-paper);
+  --color-vermillion: var(--color-vermillion);
+  --color-vermillion-dark: var(--color-vermillion-dark);
+  --color-vermillion-light: var(--color-vermillion-light);
+  --color-gold: var(--color-gold);
+  --color-gold-soft: var(--color-gold-soft);
+  --color-matcha: var(--color-matcha);
+  --color-matcha-soft: var(--color-matcha-soft);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+* {
+  scrollbar-color: var(--color-gold) var(--color-rice-dim);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-rice);
+  color: var(--color-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), serif;
+}
+
+/* Padrão seigaiha (ondas japonesas) usado como textura decorativa */
+.pattern-seigaiha {
+  background-image: radial-gradient(
+      circle at 0 0,
+      transparent 22px,
+      currentColor 23px,
+      currentColor 24px,
+      transparent 25px
+    ),
+    radial-gradient(
+      circle at 40px 0,
+      transparent 22px,
+      currentColor 23px,
+      currentColor 24px,
+      transparent 25px
+    );
+  background-size: 40px 20px;
+  background-position: 0 0, 20px -10px;
+}
+
+.pattern-dots {
+  background-image: radial-gradient(currentColor 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1.5deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(193, 68, 45, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgba(193, 68, 45, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+::selection {
+  background: var(--color-vermillion);
+  color: var(--color-rice);
+}
