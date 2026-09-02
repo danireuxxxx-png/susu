@@ -12,6 +12,21 @@ Toda a imagem e o vídeo da página são gerados pela Higgsfield via MCP.
 | `build.py` | Baixa/comprime as mídias, gera `index.html` (caminhos relativos) e `dist/casa-ipe.html` (tudo embutido em data URI, para o artifact do Claude). |
 | `assets/*.jpg`, `assets/*.mp4` | Saída otimizada do build. |
 
+## Rodar em localhost
+
+O `index.html` já está montado apontando para as fotos e o vídeo gerados, então basta servir a pasta:
+
+```bash
+git clone https://github.com/danireuxxxx-png/susu.git
+cd susu
+git checkout claude/cinematic-photorealistic-site-2175r1
+cd casa-ipe
+python3 -m http.server 8000
+```
+
+Depois abra http://localhost:8000 no navegador. Sem Python, `npx serve .` na mesma pasta funciona igual.
+Abrir o `index.html` com dois cliques também funciona, porque as mídias vêm por link direto.
+
 ## Modelos usados
 
 - **Imagens**: `nano_banana_pro` (Google Nano Banana Pro) a 2K — o modelo de maior qualidade fotorrealista do catálogo Higgsfield.
