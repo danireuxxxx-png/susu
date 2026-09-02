@@ -1,0 +1,175 @@
+{
+  "brand": "Casa Ipê — buffet e eventos, Brasília",
+  "look": "Ultra-photorealistic cinematic still. Shot on ARRI Alexa with anamorphic lenses, shallow depth of field, gentle lens flare. Warm candlelight and tungsten practicals against deep olive-green shadows. Kodak Portra 400 palette: gold, cream, dark olive, deep teal twilight. Subtle film grain, soft atmospheric haze. No text, no logos, no watermark.",
+  "image_model": {
+    "model": "nano_banana_pro",
+    "resolution": "2k"
+  },
+  "video_model": {
+    "model": "kling3_0",
+    "mode": "pro",
+    "sound": "off",
+    "duration": 5,
+    "aspect_ratio": "16:9"
+  },
+  "slots": [
+    {
+      "id": "hero",
+      "kind": "image",
+      "aspect_ratio": "16:9",
+      "max_px": 2200,
+      "inline_px": 1800,
+      "prompt": "Blue-hour outdoor wedding reception dinner in Brasília, Brazil. A long linen-covered table set with fine crystal glassware, brass candlesticks with dozens of lit candles, warm string-light bokeh overhead, low centerpieces of yellow ipê blossoms, silverware catching the light. Waiters in dark uniforms softly out of focus at the far end, the modernist silhouette of Brasília's architecture against a deep teal twilight sky. Low camera angle along the table, volumetric candlelight, haze.",
+      "job_id": "ae0c4ff9-c0a9-4ab7-b1e2-523fba49fc47",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_ae0c4ff9-c0a9-4ab7-b1e2-523fba49fc47.png"
+    },
+    {
+      "id": "hero-video",
+      "kind": "video",
+      "start_image": "hero",
+      "prompt": "Slow cinematic dolly forward along the candlelit wedding table. Candle flames flicker gently, string-light bokeh drifts softly, a waiter passes out of focus in the far background. Smooth, steady camera, no shake, subtle slow motion, seamless loop feel.",
+      "job_id": "2d0a3bd4-fdd4-4d94-8844-1799569710c1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175302_2d0a3bd4-fdd4-4d94-8844-1799569710c1.mp4"
+    },
+    {
+      "id": "dish-1",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Fine-dining plate of porcini mushroom risotto, creamy arborio rice, seared porcini and fresh mushrooms, shaved 24-month parmesan, a thin drizzle of truffle oil, micro herbs, on a matte dark stoneware plate over charcoal linen. 45-degree food photography angle, single warm candle rim light, deep shadows, steam rising.",
+      "job_id": "9366ce97-c354-4df1-b6eb-8375f17522df",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175057_9366ce97-c354-4df1-b6eb-8375f17522df.png"
+    },
+    {
+      "id": "dish-2",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Fine-dining plate of grilled filet mignon medallion, medium-rare cross-section visible, glossy port wine reduction, rustic roasted potatoes, glazed baby carrots and mini vegetables, on a matte dark stoneware plate over charcoal linen. 45-degree food photography angle, warm candle rim light, deep shadows.",
+      "job_id": "da44a209-69de-452d-a109-3b067defa619",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_da44a209-69de-452d-a109-3b067defa619.png"
+    },
+    {
+      "id": "dish-3",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Fine-dining starter of house-cured salmon: thin translucent slices fanned on a slate plate, a quenelle of cream cheese, capers, fresh dill sprigs, and slices of toasted sourdough, lemon zest. 45-degree food photography angle, warm candle rim light against dark shadows.",
+      "job_id": "4c2e2610-1fbc-4856-a647-f78312092897",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175258_4c2e2610-1fbc-4856-a647-f78312092897.png"
+    },
+    {
+      "id": "dish-4",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Fine-dining plate of fresh ravioli filled with brie, brown butter sauce, crispy fried sage leaves, toasted Brazil nuts and a dusting of parmesan, on a matte dark stoneware plate over charcoal linen. 45-degree food photography angle, warm candle rim light, deep shadows, glossy butter.",
+      "job_id": "1cf57b49-cfba-46b9-8865-d8fe0cf2ead9",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_1cf57b49-cfba-46b9-8865-d8fe0cf2ead9.png"
+    },
+    {
+      "id": "dish-5",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Dessert plate of petit gâteau: a warm Belgian chocolate cake cut open with molten chocolate flowing out, a scoop of vanilla ice cream beside it, caramelized nut crumble, on a matte dark stoneware plate. 45-degree food photography angle, warm candle rim light, deep shadows.",
+      "job_id": "fb8226d2-b025-4e4e-8501-b445213cdf88",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175216_fb8226d2-b025-4e4e-8501-b445213cdf88.png"
+    },
+    {
+      "id": "chef",
+      "kind": "image",
+      "aspect_ratio": "4:5",
+      "max_px": 1400,
+      "inline_px": 1100,
+      "prompt": "Environmental portrait of a Brazilian head chef in a crisp white chef jacket, plating a dish with tweezers under the warm tungsten light of a restaurant pass at night, steam rising, focused calm expression, stainless steel kitchen and copper pans softly out of focus behind. Cinematic three-quarter angle, shallow depth of field.",
+      "job_id": "95a02d59-fe66-4d21-b16f-c22892534ef3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175057_95a02d59-fe66-4d21-b16f-c22892534ef3.png"
+    },
+    {
+      "id": "evt-1",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Wedding reception at a lakeside house on Lago Sul, Brasília, at dusk: a long banquet table under string lights, guests seated and laughing softly out of focus, candles, ipê flowers, the calm lake and teal sky behind. Candid documentary wedding photography, cinematic.",
+      "job_id": "43838a8d-d659-4b89-8585-188545dd162c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_43838a8d-d659-4b89-8585-188545dd162c.png"
+    },
+    {
+      "id": "evt-2",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Elegant fifteenth-birthday debutante ballroom celebration in Brasília: a lavish dessert table with a tiered cake and gold details, crystal chandeliers, warm amber uplighting, a young guest in a gown out of focus in the background. Cinematic event photography.",
+      "job_id": "eb1a06b3-eb29-4d55-b104-e8d18813e564",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_eb1a06b3-eb29-4d55-b104-e8d18813e564.png"
+    },
+    {
+      "id": "evt-3",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Corporate cocktail reception on a glass-walled office terrace in Brasília's business district at night: a waiter in a dark uniform holding a slate tray of refined canapés in the foreground, city lights bokeh and guests in business attire out of focus behind. Cinematic event photography.",
+      "job_id": "b1b4a9c8-8fd3-4165-bfd8-317c27e94a71",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_b1b4a9c8-8fd3-4165-bfd8-317c27e94a71.png"
+    },
+    {
+      "id": "evt-4",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Intimate wine-pairing dinner in a private dining room: a sommelier pouring red wine into a crystal glass by candlelight, plated main course in the foreground, linen and brass details, deep warm shadows. Cinematic, shallow depth of field.",
+      "job_id": "64559e86-117f-4d6a-ad26-dac15da0de6a",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175055_64559e86-117f-4d6a-ad26-dac15da0de6a.png"
+    },
+    {
+      "id": "evt-5",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Large festive end-of-year company celebration in an event hall: live pasta and risotto stations with chefs in white jackets cooking under warm lights, a crowd of guests mingling out of focus, festoon lights, warm and lively. Cinematic event photography.",
+      "job_id": "d826f55c-150a-4db8-bd41-7f757c0c2fce",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175057_d826f55c-150a-4db8-bd41-7f757c0c2fce.png"
+    },
+    {
+      "id": "evt-6",
+      "kind": "image",
+      "aspect_ratio": "3:4",
+      "max_px": 1400,
+      "inline_px": 1000,
+      "prompt": "Engagement brunch in a garden in Park Way, Brasília, in soft golden morning light: a long table with linen, fresh fruit, pastries, sparkling wine, a blooming yellow ipê tree overhead dropping petals, guests softly out of focus. Cinematic, sun flare, warm and airy.",
+      "job_id": "5f929062-8bcc-4d7e-96f6-1b966c4e337c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175258_5f929062-8bcc-4d7e-96f6-1b966c4e337c.png"
+    },
+    {
+      "id": "band-montar",
+      "kind": "image",
+      "aspect_ratio": "16:9",
+      "max_px": 2000,
+      "inline_px": 1600,
+      "prompt": "Wide shot of an elegant event tent at night moments before the guests arrive: dozens of round tables fully set with linen, crystal glasses and lit candles, string lights overhead, ipê flower centerpieces, an empty dance floor, warm golden light against deep shadows. Cinematic, symmetrical composition.",
+      "job_id": "5c482148-d995-41eb-935f-cf991530acee",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175259_5c482148-d995-41eb-935f-cf991530acee.png"
+    },
+    {
+      "id": "band-reserva",
+      "kind": "image",
+      "aspect_ratio": "16:9",
+      "max_px": 2000,
+      "inline_px": 1600,
+      "prompt": "Restaurant kitchen pass at night during service: several finished plates lined up under warm tungsten heat lamps, a chef's hands wiping a plate rim, steam and slight motion blur, stainless steel, copper, dark background. Cinematic, shallow depth of field.",
+      "job_id": "620f53e8-8d86-46cd-a47c-8b304e8c6bd3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38ij3ycxgi4zrYdBr14O0qq18TK/hf_20260902_175102_620f53e8-8d86-46cd-a47c-8b304e8c6bd3.png"
+    }
+  ]
+}
