@@ -126,10 +126,20 @@ def build():
             else:
                 log(f"- {sid}: {len(data)//1024} KB video, too large to inline (poster only)")
 
+    if HOTLINK:
+        # no local bytes: the artifact build also links to the Higgsfield URLs; the page hides
+        # any slot the viewer's sandbox refuses to load (onerror below) and shows the CSS fallback
+        for slot in manifest["slots"]:
+            if slot["id"] not in inline and slot.get("url"):
+                inline[slot["id"]] = slot["url"]
+
     if inline_bytes * 4 / 3 > INLINE_BUDGET:
         log(f"WARNING: inline payload ~{inline_bytes*4//3//1024//1024} MB exceeds the artifact budget")
 
     slots = {s["id"]: s for s in manifest["slots"]}
+
+    def guard(src):
+        return ' onerror="this.hidden=true"' if src.startswith("http") else ""
 
     def render(lookup):
         out = html
@@ -137,7 +147,7 @@ def build():
         def img_sub(m):
             tag, sid = m.group(0), m.group(1)
             if sid in lookup:
-                return tag.replace(f'data-asset="{sid}"', f'data-asset="{sid}" src="{lookup[sid]}"')
+                return tag.replace(f'data-asset="{sid}"', f'data-asset="{sid}" src="{lookup[sid]}"{guard(lookup[sid])}')
             return tag.replace(f'data-asset="{sid}"', f'data-asset="{sid}" hidden')
 
         out = re.sub(r'<img\b[^>]*\bdata-asset="([\w-]+)"[^>]*>', img_sub, out)
@@ -147,7 +157,7 @@ def build():
             slot = slots.get(sid, {})
             poster = lookup.get(slot.get("start_image", ""))
             if sid in lookup:
-                attrs = f' src="{lookup[sid]}"' + (f' poster="{poster}"' if poster else "")
+                attrs = f' src="{lookup[sid]}"' + (f' poster="{poster}"' if poster else "") + guard(lookup[sid])
                 return open_tag.replace(f'data-asset="{sid}"', f'data-asset="{sid}"{attrs}') + inner + "</video>"
             return open_tag.replace(f'data-asset="{sid}"', f'data-asset="{sid}" hidden') + inner + "</video>"
 
