@@ -72,6 +72,15 @@ protótipo visual feito no Claude Design.
   transcrição comentada, o que dizer/evitar). O valor fechado e o plano de sessões
   são confirmados manualmente pela equipe após a análise, para manter os dados
   financeiros confiáveis.
+- **Catálogo de Agentes**: página de pré-venda para vender agentes de IA. O
+  vendedor descreve a necessidade da empresa (texto livre) e filtra por área e
+  tipo de agente; os 58 agentes do catálogo aparecem ordenados por aderência, com
+  as palavras que motivaram cada indicação, a especificação completa (o que faz,
+  como funciona, resultado esperado, entregas, integrações) e um botão para montar
+  o escopo da proposta e copiá-lo pronto para enviar. O botão "Montar solução com
+  IA" usa a Anthropic API para escolher os agentes, escrever o resumo da solução
+  combinada e sugerir perguntas de diagnóstico; sem `ANTHROPIC_API_KEY` a busca
+  por especificação continua funcionando normalmente.
 
 ## Observações
 
@@ -79,3 +88,9 @@ protótipo visual feito no Claude Design.
   turnos da conversa ("Profissional"/"Paciente") de forma inferida — não há
   separação real de locutores.
 - Tema claro/escuro persiste em cookie por usuário.
+- O catálogo de agentes é um arquivo estático (`src/lib/agent-catalog.ts`),
+  consolidado a partir dos documentos "Catálogo Oficial de Soluções — 50 Ideias de
+  Agentes de IA" e "Catálogo Completo de Agentes de IA"; agentes presentes nos dois
+  documentos viraram uma ficha única e o campo `fontes` registra a origem. Para
+  incluir ou editar um agente basta mexer nesse arquivo — a busca
+  (`src/lib/agent-search.ts`) roda no cliente, sem banco e sem chamada de API.

@@ -9,6 +9,7 @@ const navItems = [
   { href: "/ranking", icon: "♛", label: "Profissionais" },
   { href: "/pacientes", icon: "❖", label: "Pacientes" },
   { href: "/consulta", icon: "◉", label: "Consulta IA" },
+  { href: "/catalogo", icon: "▤", label: "Catálogo de Agentes" },
 ];
 
 export function SidebarNav() {

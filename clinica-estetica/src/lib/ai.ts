@@ -166,3 +166,48 @@ Formato de resposta (JSON estrito):
 
   return askForJson(system, user, 400);
 }
+
+const SYSTEM_CATALOGO =
+  "Você é a consultora de pré-venda de uma empresa que implanta agentes de IA sob medida para outras empresas. " +
+  "Você conhece apenas os agentes do catálogo enviado e recomenda somente agentes que existem nele, usando exatamente o id informado. " +
+  "Responda sempre em português do Brasil, em tom consultivo e direto, pronto para ser usado numa reunião de vendas. " +
+  "Responda APENAS com um objeto JSON válido, sem markdown, sem comentários, sem texto fora do JSON.";
+
+export type AgentRecommendation = {
+  agentId: string;
+  motivo: string;
+  prioridade: "Essencial" | "Complementar";
+};
+
+export type AgentMatchResult = {
+  resumoSolucao: string;
+  recomendados: AgentRecommendation[];
+  perguntas: string[];
+};
+
+export async function recommendAgents(input: {
+  necessidade: string;
+  empresa?: string | null;
+  catalogo: string;
+}): Promise<AgentMatchResult> {
+  const user = `Catálogo disponível (formato: id | nome | categoria | áreas | resumo):
+"""
+${input.catalogo}
+"""
+
+Empresa/cliente: ${input.empresa?.trim() || "não informado"}
+Necessidade descrita pelo vendedor:
+"""
+${input.necessidade}
+"""
+
+Selecione de 3 a 6 agentes do catálogo que resolvem essa necessidade, do mais importante para o menos importante.
+Use apenas ids que aparecem no catálogo acima. Para cada um, escreva em uma frase por que ele entra nessa solução, conectando com a dor descrita.
+Escreva também um resumo de 2 a 3 frases de como esses agentes funcionam juntos como uma solução (para o vendedor usar na reunião)
+e de 2 a 4 perguntas de diagnóstico que o vendedor ainda precisa fazer para fechar o escopo.
+
+Formato de resposta (JSON estrito):
+{"resumoSolucao": "string", "recomendados": [{"agentId": "string", "motivo": "string", "prioridade": "Essencial" | "Complementar"}], "perguntas": ["string"]}`;
+
+  return askForJson(SYSTEM_CATALOGO, user, 1600);
+}
