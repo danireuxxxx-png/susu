@@ -19,6 +19,10 @@ npm run preview  # serve o build
 npm run lint
 ```
 
+Para compartilhar o protótipo, `npm run build:demo` gera `dist-demo/index.html`: um
+arquivo único, com CSS e JS embutidos e rotas em hash, que abre em qualquer
+hospedagem estática (ou direto do disco) sem precisar de configuração de servidor.
+
 Node 20+.
 
 ## Stack

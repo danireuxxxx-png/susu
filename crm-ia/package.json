@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:demo": "vite build --config vite.config.demo.ts",
     "lint": "oxlint",
     "preview": "vite preview"
   },
