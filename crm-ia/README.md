@@ -44,6 +44,31 @@ React Router · date-fns · lucide-react.
 
 Busca global em ⌘K / Ctrl+K.
 
+## Deploy (Vercel)
+
+O projeto já vem configurado em `vercel.json`: framework Vite, `npm ci` + `npm run build`,
+saída em `dist`, *rewrite* de todas as rotas para `index.html` (sem ele, abrir
+`/pipeline` direto ou dar F5 em `/empresas/:id` devolve 404) e cache longo para os
+assets com hash.
+
+O repositório tem três apps, então a única configuração que **precisa** ser feita no
+painel é apontar a raiz:
+
+1. [vercel.com/new](https://vercel.com/new) → importar `danireuxxxx-png/susu`
+2. **Root Directory: `crm-ia`** (botão *Edit*, selecione a pasta) — sem isso o build
+   roda na raiz do repositório e falha
+3. Framework *Vite* é detectado sozinho; build e saída vêm do `vercel.json`
+4. Nenhuma variável de ambiente é necessária: nesta etapa o app é só frontend
+
+Depois disso, cada push no branch gera um *preview* e o merge no branch padrão publica
+em produção.
+
+> Os projetos `susu` e `susu-ncgv` que já existem na Vercel fazem deploy dos outros
+> apps do repositório e falham por conta própria desde antes deste CRM existir.
+> Trocar a raiz de um deles para `crm-ia` publicaria o CRM no lugar do app atual —
+> por isso o caminho recomendado é criar um projeto novo.
+
+
 ## Arquitetura
 
 ```
