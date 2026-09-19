@@ -1,4 +1,4 @@
-# Nexo CRM — frontend
+# IA.centrism CRM — frontend
 
 CRM SaaS para uma empresa que vende soluções de IA e automação: pipeline comercial,
 carteira de clientes, financeiro, metas e as telas dos agentes de IA (WhatsApp e

@@ -49,9 +49,9 @@ export function SettingsPage() {
     role: currentUser.role,
   })
   const [company, setCompany] = useState({
-    name: 'Nexo Inteligência Artificial LTDA',
+    name: 'IA.centrism Inteligência Artificial LTDA',
     cnpj: '48.221.905/0001-32',
-    site: 'www.nexo.ai',
+    site: 'www.iacentrism.ai',
   })
   const [preferences, setPreferences] = useState({
     currency: 'BRL',

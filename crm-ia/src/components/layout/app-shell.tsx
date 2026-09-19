@@ -17,7 +17,7 @@ import { UserMenu } from './user-menu'
 export function AppShell() {
   const { data } = useCrm()
   const { pathname } = useLocation()
-  const [collapsed, setCollapsed] = useLocalStorage('nexo-sidebar-collapsed', false)
+  const [collapsed, setCollapsed] = useLocalStorage('iacentrism-sidebar-collapsed', false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const user = data?.currentUser ?? CURRENT_USER

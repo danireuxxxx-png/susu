@@ -1,4 +1,4 @@
-# Nexo CRM — notas para agentes
+# IA.centrism CRM — notas para agentes
 
 - **Só frontend nesta etapa.** Nada de backend, banco, auth, WhatsApp real ou chamada
   a LLM. Se uma funcionalidade precisar disso, deixe a interface pronta e o caminho

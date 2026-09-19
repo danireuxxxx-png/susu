@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { ThemeContext, type Theme } from './theme-context'
 
-const STORAGE_KEY = 'nexo-theme'
+const STORAGE_KEY = 'iacentrism-theme'
 
 function readInitialTheme(): Theme {
   if (typeof window === 'undefined') return 'light'
