@@ -42,7 +42,12 @@ nó `respondToWebhook` no fluxo).
 { "rule": { "interval": [{ "field": "hours", "hoursInterval": 1 }] } }
 ```
 `field`: `seconds` | `minutes` | `hours` | `days` | `weeks` | `months` | `cronExpression`.
-Para horário fixo: `{ "field": "days", "triggerAtHour": 8, "triggerAtMinute": 0 }`.
+Horário fixo diário: `{ "field": "days", "triggerAtHour": 8, "triggerAtMinute": 0 }`.
+Dia fixo do mês (fechamento contábil, relatório mensal):
+`{ "field": "months", "triggerAtDayOfMonth": 1, "triggerAtHour": 7, "triggerAtMinute": 0 }`.
+
+**`n8n-nodes-base.errorTrigger`** (v1) — `{}`. Sem parâmetro nenhum. Ele dispara quando outro
+workflow falha; o workflow que falhou aponta para este em Settings → Error Workflow.
 
 **`@n8n/n8n-nodes-langchain.chatTrigger`** (v1.1) — `{ "public": false, "options": {} }`
 
@@ -124,8 +129,11 @@ credencial. Para tolerar falha da fonte: `"options": { "response": { "response":
 ```json
 "documentId": { "__rl": true, "mode": "id", "value": "1AbC..." }
 ```
-`mode`: `id` | `url` | `list`. Para entrega, prefira `id` ou `url` — `list` guarda o cache
-da *sua* instância e não resolve na do cliente.
+**Os modos aceitos dependem do campo**, não são uma lista única. `documentId` e `calendar`
+aceitam `id` | `url` | `list`; `sheetName` aceita `name` (o nome da aba) além de `id`/`list`;
+`channelId` do Slack aceita `name` (`#alertas`). Na dúvida, copie o nó da interface e veja o
+`mode` que ele gravou. Para entrega, evite `list`: ele guarda o cache da *sua* instância e
+não resolve na do cliente.
 
 **`n8n-nodes-base.googleSheets`** (v4.5)
 ```json
@@ -152,9 +160,42 @@ da *sua* instância e não resolve na do cliente.
 `operation`: `create` | `get` | `getAll` | `update` | `delete`. Para checar conflito antes de
 marcar, use `getAll` com `timeMin`/`timeMax` em `options`.
 
-**`n8n-nodes-base.gmail`** (v2.1) — `{ "sendTo": "...", "subject": "...", "message": "...", "options": {} }`
+**`n8n-nodes-base.gmail`** — envio (v2.1):
+`{ "sendTo": "...", "subject": "...", "message": "...", "options": {} }`
+
+Gmail em **leitura**, que é o que um fluxo de "nota fiscal que chega por e-mail" precisa:
+```json
+{
+  "resource": "message",
+  "operation": "getAll",
+  "returnAll": false,
+  "limit": 50,
+  "filters": { "q": "has:attachment from:fornecedor.com after:2026/09/01" },
+  "options": { "downloadAttachments": true }
+}
+```
+`filters.q` usa a sintaxe de busca do próprio Gmail. `downloadAttachments` traz o anexo como
+binário para o nó seguinte — sem ele, você recebe só os metadados.
+
+**`n8n-nodes-base.extractFromFile`** (v1) — lê o binário que veio do e-mail ou do download:
+```json
+{ "operation": "pdf", "binaryPropertyName": "data", "options": {} }
+```
+`operation`: `pdf` | `csv` | `xlsx` | `ods` | `text` | `html` | `xml` | `fromJson`.
+`binaryPropertyName` é o nome da propriedade binária produzida pelo nó anterior (`data` é o
+padrão do Gmail; com vários anexos vira `attachment_0`, `attachment_1`, …).
 **`n8n-nodes-base.slack`** (v2.2) — `{ "select": "channel", "channelId": {"__rl": true, "mode": "name", "value": "#alertas"}, "text": "...", "otherOptions": {} }`
-**`n8n-nodes-base.postgres`** (v2.5) — `{ "operation": "executeQuery", "query": "SELECT ...", "options": {} }` (use `queryReplacement` para parâmetros, nunca concatene expressão dentro do SQL)
+**`n8n-nodes-base.postgres`** (v2.5)
+```json
+{
+  "operation": "executeQuery",
+  "query": "SELECT * FROM notas WHERE cnpj = $1 AND competencia = $2",
+  "options": { "queryReplacement": "={{ $json.cnpj }},={{ $json.competencia }}" }
+}
+```
+`queryReplacement` fica dentro de `options`, com os valores separados por vírgula na ordem
+de `$1`, `$2`, … Nunca concatene expressão dentro do SQL: além de quebrar com aspas no dado,
+é injeção.
 
 ---
 
@@ -198,7 +239,14 @@ misturam.
 como erro. Em entrega com sub-workflows, importe-os **primeiro**, anote os ids e preencha;
 se não der, documente como passo obrigatório pós-importação, com o id a preencher.
 
-**`@n8n/n8n-nodes-langchain.chainLlm`** (v1.4) — `{ "promptType": "define", "text": "={{ ... }}" }`
+**`@n8n/n8n-nodes-langchain.chainLlm`** (v1.4)
+```json
+{ "promptType": "define", "text": "={{ $json.textoDaNota }}", "hasOutputParser": true }
+```
+**`hasOutputParser: true` é obrigatório para que a porta `ai_outputParser` exista.** Sem o
+flag, você liga o parser no `connections`, o JSON importa, e o parser simplesmente não
+binda — a saída volta em texto livre e o Switch seguinte cai sempre no fallback. O mesmo
+flag vale para o nó `agent`. O validador trata a ausência como erro.
 **`@n8n/n8n-nodes-langchain.outputParserStructured`** (v1.2) — `{ "schemaType": "manual", "inputSchema": "{\"type\":\"object\",\"properties\":{...}}" }`
 
 ---

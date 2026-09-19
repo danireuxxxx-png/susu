@@ -67,12 +67,21 @@ REF_NO = re.compile(r"\$\(\s*(?:'([^']+)'|\"([^\"]+)\")\s*\)")
 
 
 def andar(valor, caminho=""):
-    """Percorre a estrutura já decodificada, devolvendo (caminho, chave, string)."""
+    """Percorre a estrutura decodificada, devolvendo (caminho, rótulo, string).
+
+    O rótulo é o nome efetivo do campo. Header e query do httpRequest não vêm como
+    {"x-api-key": "..."} e sim como {"name": "x-api-key", "value": "..."} — aí a chave
+    JSON é "value" e não denuncia nada. Nesses pares o rótulo do valor passa a ser o
+    conteúdo de "name", senão um token em claro atravessa a varredura.
+    """
     if isinstance(valor, dict):
+        par = valor.get("name") if (
+            isinstance(valor.get("name"), str) and isinstance(valor.get("value"), str)
+        ) else None
         for k, v in valor.items():
             sub = f"{caminho}.{k}" if caminho else str(k)
             if isinstance(v, str):
-                yield sub, str(k), v
+                yield sub, (par if k == "value" and par else str(k)), v
             else:
                 yield from andar(v, sub)
     elif isinstance(valor, list):
@@ -265,6 +274,22 @@ def validar(caminho):
             avisos.append(
                 f"{origem!r}: alimenta um IF/Switch sem Structured Output Parser — "
                 "a saída em texto livre faz a comparação falhar de forma intermitente"
+            )
+
+    # --- parser ligado mas não habilitado --------------------------------
+    # O agent e o chainLlm só expõem a porta ai_outputParser quando
+    # parameters.hasOutputParser é true. Sem o flag, a conexão existe no JSON,
+    # o validador estrutural passa, e o parser simplesmente não binda.
+    for nome, tipos in recebe_ai.items():
+        if "ai_outputParser" not in tipos:
+            continue
+        p_no = nomes.get(nome, {}).get("parameters")
+        p_no = p_no if isinstance(p_no, dict) else {}
+        if p_no.get("hasOutputParser") is not True:
+            erros.append(
+                f"{nome!r}: recebe 'ai_outputParser' mas não tem "
+                "\"hasOutputParser\": true em parameters — a porta não existe e o parser "
+                "não binda; a saída volta em texto livre"
             )
 
     # --- expressões citando nós ------------------------------------------

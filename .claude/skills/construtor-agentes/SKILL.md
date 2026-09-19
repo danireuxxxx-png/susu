@@ -186,6 +186,12 @@ prometer desconto ou prazo, apagar dado, mover dinheiro, falar em nome da empres
 **Peça aprovação da especificação antes de construir.** Uma linha basta: *"Fecha assim?
 Qualquer ajuste agora sai de graça."*
 
+Quando não há ninguém para responder no turno — execução automatizada, CI, ou um pedido que
+já vem com "me entrega o JSON" —, **construa assim mesmo**, com a especificação marcada como
+*não aprovada* no topo e as suposições na seção 0. Travar um turno não-interativo esperando
+uma aprovação que não vai chegar entrega zero; o portão existe para a suposição ficar
+visível antes de virar código, e isso a marcação já garante.
+
 ---
 
 ## Fase 3 — Construção
@@ -219,15 +225,18 @@ tem correspondente no artefato final, ou ele era decorativo ou você esqueceu de
 
 Grave os artefatos em `entregas/<cliente>/<nome-do-agente>/` a partir da raiz do
 repositório — um arquivo por workflow, nomeado no vocabulário do negócio
-(`atendente-whatsapp.json`, `ferramenta-consulta-agenda.json`). Se o cliente já tiver um
-diretório próprio, use o dele. Nunca deixe o entregável só no diretório temporário.
+(`atendente-whatsapp.json`, `ferramenta-consulta-agenda.json`). "Diretório do cliente"
+significa a pasta dele **dentro de `entregas/`**; os projetos de produto do repositório
+(`clinica-estetica/`, `restaurante-gestao/`) são software nosso e nunca recebem entregável,
+mesmo quando o cliente é do mesmo ramo. Nunca deixe o entregável só no diretório temporário.
 
 Uma automação entregue como arquivo solto não é entrega. Feche sempre com:
 
 1. **Validação.** Para n8n, rode antes de entregar — JSON que não importa queima a reunião:
    ```bash
    RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
-   python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" workflow.json
+   python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" \
+     "$RAIZ/entregas/<cliente>/<nome-do-agente>"/*.json
    ```
 2. **Credenciais necessárias**, nomeadas uma a uma, com onde obter cada uma. Nunca coloque
    chave, token ou senha dentro do arquivo entregue — use o nome da credencial do n8n ou

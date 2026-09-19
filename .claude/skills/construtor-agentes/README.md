@@ -43,6 +43,8 @@ construtor-agentes/
     └── validar_n8n.py          valida o workflow antes da entrega
 ```
 
+Os entregáveis vão para `entregas/<cliente>/<nome-do-agente>/` na raiz do repositório.
+
 Os arquivos de `references/` só entram no contexto quando são necessários — construir no
 n8n não carrega a referência do Hermes e vice-versa.
 
@@ -50,14 +52,16 @@ n8n não carrega a referência do Hermes e vice-versa.
 
 ```bash
 RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
-python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" workflow.json
+python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" \
+  "$RAIZ/entregas/<cliente>/<agente>"/*.json
 ```
 
 Pega: JSON inválido, conexão para nó inexistente, **expressão `$('Nome')` apontando para nó
 renomeado**, agente sem modelo de linguagem, ferramenta `toolWorkflow` sem `workflowId`, nó
-órfão, nome/id duplicado, ferramenta sem descrição, LLM alimentando IF/Switch sem output
-parser, `executionOrder` ausente, credencial com id local e segredo esquecido no arquivo —
-inclusive dentro de expressão. Código de saída 1 quando há erro, então dá para usar em CI.
+órfão, nome/id duplicado, ferramenta sem descrição, parser ligado sem `hasOutputParser`, LLM alimentando IF/Switch
+sem output parser, `executionOrder` ausente, credencial com id local e segredo esquecido no arquivo —
+inclusive dentro de expressão e em pares `name`/`value` (o formato de header e query do
+`httpRequest`). Código de saída 1 quando há erro, então dá para usar em CI.
 
 Ele **não** verifica os campos dentro de `parameters`: isso só a instância do n8n sabe, e
 `references/n8n-parametros.md` explica como obter o schema verdadeiro.

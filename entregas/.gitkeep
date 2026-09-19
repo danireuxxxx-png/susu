@@ -1,0 +1,7 @@
+Entregáveis de agentes e automações, um diretório por cliente:
+
+    entregas/<cliente>/<nome-do-agente>/
+
+Criado e usado pela skill .claude/skills/construtor-agentes.
+Os projetos de produto do repositório (clinica-estetica/, restaurante-gestao/) são
+software nosso e não recebem entregável de cliente.

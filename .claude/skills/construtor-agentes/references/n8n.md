@@ -204,6 +204,11 @@ O modelo entra só onde há julgamento. Sempre pendure um **Structured Output Pa
 texto livre e a comparação do Switch falha de forma intermitente — o pior tipo de bug,
 porque passa no teste e quebra na terça-feira.
 
+Pendurar o parser são **duas** coisas, e esquecer a segunda dá exatamente o bug que o parser
+existe para evitar: a conexão `ai_outputParser` no `connections` **e** `"hasOutputParser": true`
+no `parameters` do `chainLlm`. Sem o flag a porta não existe, o parser não binda e a saída
+volta em texto livre, com o JSON importando sem reclamar. O validador trata isso como erro.
+
 ## 6. Padrão C — agente com ferramentas
 
 ```
@@ -285,6 +290,7 @@ chave, token, senha ou URL interna dentro do arquivo — ele vai circular por e-
 | Conexão ignorada silenciosamente | nome em `connections` não bate exatamente com `name` do nó |
 | Rate limit / 429 | falta `splitInBatches` com intervalo, ou retry no nó |
 | Agente chama a ferramenta errada | `description` da ferramenta diz o que ela é, não quando usar |
+| Parser ligado mas saída vem em texto livre | falta `hasOutputParser: true` no `parameters` |
 | Falha em silêncio à noite | sem Error Trigger / sem notificação no caminho de erro |
 
 Antes de entregar, rode sempre:
