@@ -50,13 +50,21 @@ Este repositório tem 58 agentes já especificados comercialmente em
 `areas`, `dores`, `entregas`, `integracoes`). Antes de especificar do zero, procure por
 palavra-chave e por dor.
 
+O arquivo mora dentro de `clinica-estetica/` porque é a página de catálogo daquele produto,
+mas **o catálogo é transversal** — cobre comercial, marketing, financeiro, RH, operações e
+jurídico. Consulte-o qualquer que seja o cliente.
+
 Se houver ficha correspondente, comece dela: os campos do catálogo já preenchem boa parte
 dos pilares **objetivo** e **ferramentas**, e o texto foi escrito para o cliente ler. Partir
 do catálogo mantém o que foi vendido igual ao que vai ser entregue — divergência entre
 proposta e entrega é a origem mais comum de retrabalho não pago.
 
+Os comandos desta skill partem da **raiz do repositório**, e o diretório de trabalho pode
+mudar entre um comando e outro — então ancore sempre:
+
 ```bash
-grep -n -i "palavra-chave-da-dor" clinica-estetica/src/lib/agent-catalog.ts
+RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
+grep -n -i -E "whatsapp|agendamento|lead" "$RAIZ/clinica-estetica/src/lib/agent-catalog.ts"
 ```
 
 Se não houver ficha, siga normalmente — e ao final considere sugerir a nova ficha para o
@@ -125,8 +133,11 @@ catálogo e do repositório, e apresente preenchido para correção.**
 > serviços; (4) WhatsApp e Google Agenda. Só a (5) eu não consigo deduzir: **ele pode
 > confirmar horário na agenda sozinho, ou só sugere e um humano confirma?**"
 
-Isso transforma cinco perguntas em uma. Pergunte de verdade só o que muda a arquitetura e
-você não consegue deduzir — tipicamente a pergunta 5, porque autonomia é decisão de negócio,
+Isso transforma cinco perguntas em uma. O que você deduziu e não confirmou vai para a
+**seção 0 da especificação** (suposições e perguntas em aberto), nunca diluído no meio do
+texto — suposição não declarada vira requisito aprovado sem ninguém perceber.
+
+Pergunte de verdade só o que muda a arquitetura e você não consegue deduzir — tipicamente a pergunta 5, porque autonomia é decisão de negócio,
 não técnica: ninguém além do dono do processo pode dizer até onde a máquina pode ir sozinha.
 
 ---
@@ -182,12 +193,14 @@ Qualquer ajuste agora sai de graça."*
 Leia o guia da plataforma escolhida — **apenas o da plataforma escolhida**, para não
 carregar contexto inútil:
 
-- **n8n** → `references/n8n.md` (nós, formato do JSON, padrões, armadilhas)
+- **n8n** → `references/n8n.md` (nós, formato do JSON, padrões, armadilhas) e, na hora de
+  escrever o `parameters` de cada nó, `references/n8n-parametros.md`
 - **Hermes** → `references/hermes.md` (SOUL.md, config.yaml, toolsets, skills, cron)
 
-Se a escolha entre agente e automação, ou entre nós, ainda estiver em aberto depois da
-Fase 0, `references/decisao.md` tem as árvores de decisão detalhadas e o mapa
-"integração → nó".
+Além do guia da plataforma, a **seção 3 de `references/decisao.md`** traduz a integração que
+o cliente pediu ("CRM", "WhatsApp", "assinatura eletrônica") no nó correspondente — é insumo
+de construção, não só de decisão. O resto daquele arquivo só interessa se a triagem da
+Fase 0 tiver ficado em aberto.
 
 Cada pilar da especificação vira uma parte concreta do que você constrói. Se um pilar não
 tem correspondente no artefato final, ou ele era decorativo ou você esqueceu de implementá-lo:
@@ -204,11 +217,17 @@ tem correspondente no artefato final, ou ele era decorativo ou você esqueceu de
 
 ## Fase 4 — Entrega
 
+Grave os artefatos em `entregas/<cliente>/<nome-do-agente>/` a partir da raiz do
+repositório — um arquivo por workflow, nomeado no vocabulário do negócio
+(`atendente-whatsapp.json`, `ferramenta-consulta-agenda.json`). Se o cliente já tiver um
+diretório próprio, use o dele. Nunca deixe o entregável só no diretório temporário.
+
 Uma automação entregue como arquivo solto não é entrega. Feche sempre com:
 
 1. **Validação.** Para n8n, rode antes de entregar — JSON que não importa queima a reunião:
    ```bash
-   python3 .claude/skills/construtor-agentes/scripts/validar_n8n.py caminho/do/workflow.json
+   RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
+   python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" workflow.json
    ```
 2. **Credenciais necessárias**, nomeadas uma a uma, com onde obter cada uma. Nunca coloque
    chave, token ou senha dentro do arquivo entregue — use o nome da credencial do n8n ou
@@ -218,10 +237,12 @@ Uma automação entregue como arquivo solto não é entrega. Feche sempre com:
 4. **Riscos e o que vai quebrar primeiro.** Honestidade aqui é o que diferencia fornecedor
    de parceiro: limite de API, mudança de layout da fonte, volume acima do previsto.
 
-Se o servidor MCP do n8n estiver autenticado nesta sessão, ofereça subir o workflow direto
-na instância em vez de entregar o arquivo. Se não estiver, entregue o JSON para importar
-manualmente (Workflows → ⋯ → Import from File) e avise que a conexão direta está disponível
-mediante autorização do conector.
+**MCP do n8n:** o conector está autorizado se, e somente se, houver ferramentas com prefixo
+`mcp__n8n__` disponíveis na sessão — não há outro teste, e não invente nome de ferramenta
+para descobrir. Havendo, ofereça subir o workflow direto na instância e conferir por lá o
+schema real dos nós. Não havendo, entregue o JSON para importar manualmente
+(Workflows → ⋯ → Import from File) e avise, uma vez, que a conexão direta fica disponível
+autorizando o conector em `/mcp` ou nas configurações do claude.ai.
 
 ---
 
@@ -236,5 +257,12 @@ mediante autorização do conector.
   decidir em vez de fé.
 - **Nomeie nós e agentes pelo que fazem no negócio**, não pelo tipo técnico. "Classifica
   lead" em vez de "HTTP Request1" — quem vai abrir isso daqui a seis meses é o cliente.
-- **Nunca invente nome de nó, campo ou toolset.** Se não tiver certeza, verifique na
-  referência ou pergunte. JSON com nó inexistente falha na importação e custa credibilidade.
+- **Nunca invente nome de nó, de toolset ou de ferramenta MCP.** Esses conjuntos são
+  finitos e estão nas referências: se não estiver lá, confirme ou pergunte. JSON com nó
+  inexistente falha na importação e custa credibilidade.
+- **Campos de `parameters` são outra história.** Eles mudam por `typeVersion` e nenhuma
+  referência fica correta para sempre, então a regra acima não se aplica a eles — seria
+  impossível de cumprir. `references/n8n-parametros.md` traz os nós mais usados e, antes
+  deles, o jeito de obter o schema verdadeiro (copiar o nó da interface com `Ctrl+C`).
+  Quando escrever um `parameters` de memória, **declare isso na entrega**: campo errado não
+  quebra a importação, quebra na primeira execução — o pior momento para o cliente descobrir.

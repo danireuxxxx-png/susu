@@ -1,7 +1,12 @@
 # Especificação — [Nome do agente/automação]
 
-> Preencha e envie para aprovação **antes** de construir. Campo que você não souber
-> responder é pergunta para o cliente, não suposição para escrever.
+> Preencha e envie para aprovação **antes** de construir.
+>
+> Suposição é permitida — **desde que marcada como tal**. Preencha o que der para deduzir do
+> contexto, do catálogo e do repositório, e leve para a seção 0 tudo que você deduziu e não
+> confirmou. O que não se resolve nem por dedução vira pergunta aberta ali. O que nunca vale
+> é suposição não declarada no meio do texto: ela some dentro do documento e vira, sem
+> ninguém notar, requisito aprovado.
 
 | | |
 |---|---|
@@ -11,6 +16,26 @@
 | **Departamento** | |
 | **Dono do processo** | *quem aprova e quem recebe o resultado* |
 | **Ficha do catálogo** | *id em agent-catalog.ts, ou "novo"* |
+
+---
+
+## 0. Suposições e perguntas em aberto
+
+Suposições que assumi para poder avançar — **confirme ou corrija**:
+
+| # | Assumi que | Se estiver errado, muda o quê |
+|---|---|---|
+| 1 | | |
+
+Perguntas que não consigo deduzir e preciso que você responda:
+
+| # | Pergunta | Por que importa |
+|---|---|---|
+| 1 | | |
+
+A pergunta que quase sempre aparece aqui é a 5 do diagnóstico — *quais decisões ele toma
+sozinho* —, porque autonomia é decisão de negócio, não técnica: só o dono do processo pode
+dizer até onde a máquina vai sem humano.
 
 ---
 

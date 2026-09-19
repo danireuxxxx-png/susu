@@ -103,9 +103,21 @@ o **sub-nó**, o destino é o **agente**. É invertido em relação à intuiçã
 Tipos de sub-conexão: `ai_languageModel`, `ai_memory`, `ai_tool`, `ai_outputParser`,
 `ai_embedding`, `ai_vectorStore`, `ai_document`, `ai_textSplitter`, `ai_retriever`.
 
-Todas as ferramentas de um agente usam `index: 0` — várias ferramentas entram na mesma
-porta, cada uma como um item a mais no array interno ou como entrada própria em
-`connections`. Um agente sem `ai_languageModel` não executa.
+**Cada ferramenta é uma entrada própria em `connections`.** Como `connections` é indexado
+pelo nó de *origem* e o array interno é a lista de *destinos*, duas ferramentas nunca
+compartilham uma entrada — pôr as duas no mesmo array interno significaria uma ferramenta
+ligada a dois agentes, que é outra coisa. Três ferramentas, três chaves de primeiro nível:
+
+```json
+"connections": {
+  "Consulta agenda":  { "ai_tool": [[{ "node": "Agente", "type": "ai_tool", "index": 0 }]] },
+  "Registra no CRM":  { "ai_tool": [[{ "node": "Agente", "type": "ai_tool", "index": 0 }]] },
+  "Tabela de precos": { "ai_tool": [[{ "node": "Agente", "type": "ai_tool", "index": 0 }]] }
+}
+```
+
+Todas usam `index: 0` — o agente tem uma única porta de ferramentas. Um agente sem
+`ai_languageModel` não executa.
 
 ## 3. Catálogo de nós por função
 
@@ -168,6 +180,10 @@ Prefixos: nós de base são `n8n-nodes-base.*`; nós de IA/LangChain são
 Se um serviço não tem nó dedicado, **não invente um** — use `httpRequest`. É o caminho
 correto e sempre funciona.
 
+Esta seção lista **tipos** de nó. O conteúdo de `parameters` varia por `typeVersion` e não
+cabe aqui: veja `n8n-parametros.md`, que traz os schemas dos nós mais usados e o método para
+obter o schema verdadeiro da instância do cliente em vez de adivinhar.
+
 ## 4. Padrão A — automação determinística
 
 ```
@@ -203,8 +219,7 @@ Parâmetros do nó `agent`:
 ```json
 {
   "parameters": {
-    "promptType": "define",
-    "text": "={{ $json.chatInput }}",
+    "promptType": "auto",
     "options": {
       "systemMessage": "Você é ...\n\n## Como decidir\n...\n\n## Nunca faça\n..."
     }
@@ -214,8 +229,16 @@ Parâmetros do nó `agent`:
 }
 ```
 
-`promptType: "auto"` pega o campo `chatInput` automaticamente; `"define"` permite montar o
-texto com expressão — prefira `"define"` quando a entrada vier de webhook e não de chat.
+`promptType: "auto"` pega o campo `chatInput` automaticamente — é o certo quando o gatilho é
+um Chat Trigger, como no exemplo acima. Quando a entrada vem de webhook (WhatsApp, CRM,
+formulário) o campo tem outro nome, e aí você monta o texto:
+
+```json
+"promptType": "define",
+"text": "={{ $json.body.message.text }}"
+```
+
+Usar `"define"` só para reproduzir `{{ $json.chatInput }}` é o modo automático escrito à mão.
 
 **O `systemMessage` é onde moram os pilares.** Escreva-o com as seções: papel e objetivo,
 como decidir (processos), o que nunca fazer e quando escalar (limites). Cada ferramenta
@@ -267,5 +290,6 @@ chave, token, senha ou URL interna dentro do arquivo — ele vai circular por e-
 Antes de entregar, rode sempre:
 
 ```bash
-python3 .claude/skills/construtor-agentes/scripts/validar_n8n.py workflow.json
+RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
+python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" workflow.json
 ```

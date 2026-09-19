@@ -8,6 +8,10 @@ precisar traduzir a integração pedida pelo cliente em nó do n8n.
 ## 1. Agente ou automação? (árvore completa)
 
 ```
+Precisa conversar em várias trocas, mantendo o contexto do que já foi dito?
+├── SIM → AGENTE  (pule para "n8n ou Hermes?")
+└── NÃO ↓
+
 Os passos são sempre os mesmos, na mesma ordem?
 ├── SIM → Algum passo exige julgamento (classificar, resumir, redigir, extrair de texto solto)?
 │         ├── NÃO  → AUTOMAÇÃO PURA          Padrão A
@@ -23,6 +27,12 @@ Os passos são sempre os mesmos, na mesma ordem?
                         ├── SIM → HERMES
                         └── NÃO → AGENTE NO n8n
 ```
+
+O ramo de multi-turno vem primeiro de propósito: conversa é o caso em que "os passos são
+sempre os mesmos" engana. *Responder preço no WhatsApp* parece fixo (recebe → consulta
+tabela → responde), mas a pessoa repergunta, muda de procedimento, some e volta — e aí o
+sistema precisa escolher os passos a cada mensagem. Esta árvore e a tabela da Fase 0 do
+SKILL.md dão o mesmo veredito; se discordarem, o multi-turno manda.
 
 **Dois testes rápidos que resolvem quase toda dúvida:**
 

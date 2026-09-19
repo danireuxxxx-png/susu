@@ -32,6 +32,7 @@ construtor-agentes/
 ├── SKILL.md                    processo completo (sempre carregado quando dispara)
 ├── references/
 │   ├── n8n.md                  nós, JSON do workflow, padrões, armadilhas
+│   ├── n8n-parametros.md       o 'parameters' de cada nó + como obter o schema real
 │   ├── hermes.md               SOUL.md, config.yaml, toolsets, skills, cron
 │   └── decisao.md              árvores de decisão e mapa integração → nó
 ├── templates/
@@ -48,13 +49,18 @@ n8n não carrega a referência do Hermes e vice-versa.
 ## Validador
 
 ```bash
-python3 .claude/skills/construtor-agentes/scripts/validar_n8n.py workflow.json
+RAIZ="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}"
+python3 "$RAIZ/.claude/skills/construtor-agentes/scripts/validar_n8n.py" workflow.json
 ```
 
-Pega: JSON inválido, conexão para nó inexistente, agente sem modelo de linguagem, nó órfão,
-nome/id duplicado, ferramenta sem descrição, LLM alimentando IF/Switch sem output parser,
-`executionOrder` ausente, credencial com id local e segredo esquecido dentro do arquivo.
-Código de saída 1 quando há erro — dá para usar em CI.
+Pega: JSON inválido, conexão para nó inexistente, **expressão `$('Nome')` apontando para nó
+renomeado**, agente sem modelo de linguagem, ferramenta `toolWorkflow` sem `workflowId`, nó
+órfão, nome/id duplicado, ferramenta sem descrição, LLM alimentando IF/Switch sem output
+parser, `executionOrder` ausente, credencial com id local e segredo esquecido no arquivo —
+inclusive dentro de expressão. Código de saída 1 quando há erro, então dá para usar em CI.
+
+Ele **não** verifica os campos dentro de `parameters`: isso só a instância do n8n sabe, e
+`references/n8n-parametros.md` explica como obter o schema verdadeiro.
 
 ## Integração com o catálogo comercial
 
