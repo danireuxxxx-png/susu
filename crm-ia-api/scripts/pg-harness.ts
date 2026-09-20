@@ -76,6 +76,8 @@ export async function readMigration(file: string) {
 export interface HarnessOptions {
   /** Aplica supabase/seed.sql depois das migrations. */
   withSeed?: boolean
+  /** Desligue para começar de um banco cru — é assim que o `setup` encontra um Supabase novo. */
+  withMigrations?: boolean
   dataDir?: string
 }
 
@@ -83,12 +85,14 @@ export async function createDatabase(options: HarnessOptions = {}) {
   const db = new PGlite(options.dataDir)
   await db.exec(SUPABASE_BOOTSTRAP)
 
-  for (const file of await listMigrations()) {
-    const sql = await readMigration(file)
-    try {
-      await db.exec(sql)
-    } catch (error) {
-      throw new Error(`migration ${file} falhou: ${(error as Error).message}`)
+  if (options.withMigrations !== false) {
+    for (const file of await listMigrations()) {
+      const sql = await readMigration(file)
+      try {
+        await db.exec(sql)
+      } catch (error) {
+        throw new Error(`migration ${file} falhou: ${(error as Error).message}`)
+      }
     }
   }
 

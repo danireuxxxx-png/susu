@@ -298,16 +298,16 @@ O passo a passo completo — do projeto no Supabase até o CRM aberto no
 navegador — está em **[DEPLOY.md](DEPLOY.md)**. Em resumo:
 
 ```bash
-# 1. Schema, com a connection string DIRETA do Supabase (porta 5432)
-npm run migrate
+# 1. Banco: migrations + dono + organização + conferência, em um comando
+#    (com a connection string DIRETA do Supabase, porta 5432)
+npm run setup
 
-# 2. Dono, organização, funil e catálogo (idempotente)
-OWNER_EMAIL=voce@empresa.com OWNER_PASSWORD='...' \
-ORGANIZATION_NAME='IA.centrism' npm run bootstrap
-
-# 3. API, com a string do POOLER (porta 6543)
+# 2. API, com a string do POOLER (porta 6543)
 docker build -t iacentrism-crm-api .   # ou npm run build && npm start
 ```
+
+Sem nada instalado, o passo 1 roda pelo GitHub: aba **Actions → CRM — banco →
+Run workflow → setup**, com os segredos no cofre do repositório.
 
 O `render.yaml` sobe isso como blueprint no Render; o `Dockerfile` serve
 qualquer plataforma que rode container. Nenhum passo depende de mexer no
@@ -315,16 +315,19 @@ painel do Supabase.
 
 | Script | O que faz |
 |---|---|
-| `npm run migrate` | aplica as migrations pendentes, cada uma em sua transação; `-- --status` só lista |
-| `npm run bootstrap` | cria usuário dono, organização, funil de 8 etapas e catálogo de soluções |
+| `npm run setup` | instalação completa: migrations, dono, organização, funil, catálogo e conferência de ponta a ponta |
+| `npm run migrate` | só o schema; `-- --status` apenas lista o estado |
+| `npm run bootstrap` | só o dono: usuário, organização, funil de 8 etapas e catálogo |
 | `npm run build` · `npm start` | compila para `dist/` e roda o servidor |
+
+Todos são idempotentes: rodar de novo não duplica nada.
 
 Checklist antes de ir ao ar:
 
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` só no servidor — nunca no frontend
 - [ ] `CORS_ORIGINS` com os domínios reais
 - [ ] `DATABASE_SSL=require` e connection string do **pooler** (6543) na API
-- [ ] `npm run migrate` sem erro (a migration de RLS falha se faltar policy)
+- [ ] `npm run setup` sem erro e com `0 sem RLS` (a migration de RLS falha se faltar policy)
 - [ ] backups e PITR ativos no Supabase
 
 ---

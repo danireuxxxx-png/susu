@@ -18,11 +18,10 @@ Supabase — o schema inteiro vem das migrations versionadas.
 
 - [Antes de começar](#antes-de-começar)
 - [1. Supabase](#1-supabase)
-- [2. Aplicar o schema](#2-aplicar-o-schema)
-- [3. Criar o dono e a organização](#3-criar-o-dono-e-a-organização)
-- [4. Publicar a API](#4-publicar-a-api)
-- [5. Publicar o frontend](#5-publicar-o-frontend)
-- [6. Fechar o circuito (CORS)](#6-fechar-o-circuito-cors)
+- [2. Instalar o banco](#2-instalar-o-banco) — [pelo navegador](#a-pelo-navegador-github-actions) ou [pelo terminal](#b-pelo-terminal-um-comando)
+- [3. Publicar a API](#3-publicar-a-api)
+- [4. Publicar o frontend](#4-publicar-o-frontend)
+- [5. Fechar o circuito (CORS)](#5-fechar-o-circuito-cors)
 - [Conferência final](#conferência-final)
 - [Atualizações depois do primeiro deploy](#atualizações-depois-do-primeiro-deploy)
 - [Checklist de segurança](#checklist-de-segurança)
@@ -40,8 +39,14 @@ Contas necessárias (todas têm plano gratuito para começar):
 | [Render](https://render.com) (ou Railway / Fly.io) | roda a API em container | o gratuito hiberna; ~US$ 7/mês evita isso |
 | [Vercel](https://vercel.com) | serve o frontend | Hobby basta |
 
-Na sua máquina: Node 20.19+ e o repositório clonado. Os passos 2 e 3 rodam
-localmente uma vez só — depois disso a API sobe sozinha a cada push.
+O passo 2 (instalar o banco) roda uma vez só, e tem dois caminhos — **escolha um**:
+
+| Caminho | Precisa de | Bom quando |
+|---|---|---|
+| **A — navegador** | nada instalado; os segredos ficam no cofre do GitHub | você não quer mexer em terminal |
+| **B — terminal** | Node 20.19+ e o repositório clonado | você já está com o projeto aberto |
+
+Para o caminho B:
 
 ```bash
 git clone https://github.com/danireuxxxx-png/susu.git
@@ -84,9 +89,45 @@ npm ci
 
 ---
 
-## 2. Aplicar o schema
+## 2. Instalar o banco
 
-Na sua máquina, dentro de `crm-ia-api`:
+Um passo só: aplicar as 14 migrations, criar seu usuário dono, a organização,
+o funil comercial com as oito etapas e o catálogo de soluções — e conferir que
+o conjunto responde. É **idempotente**: rodar de novo não duplica nada, então
+não há como "instalar errado" e ter de recomeçar.
+
+### A — pelo navegador (GitHub Actions)
+
+Quem roda é o GitHub; os segredos ficam no cofre do repositório e nunca passam
+por e-mail, chat ou pela sua máquina.
+
+1. No repositório: **Settings → Secrets and variables → Actions → New repository secret**.
+   Cadastre seis:
+
+   | Secret | Valor (do passo 1) |
+   |---|---|
+   | `SUPABASE_DB_URL` | connection string **direta** (porta `5432`), com a senha |
+   | `SUPABASE_URL` | `https://<ref>.supabase.co` |
+   | `SUPABASE_ANON_KEY` | chave `anon` |
+   | `SUPABASE_SERVICE_ROLE_KEY` | chave `service_role` |
+   | `OWNER_EMAIL` | o e-mail com que você vai entrar no CRM |
+   | `OWNER_PASSWORD` | a senha que você quer usar (mínimo 8 caracteres) |
+
+2. Aba **Actions → CRM — banco → Run workflow**
+3. Em *O que fazer*, escolha **setup**, ajuste o nome da empresa e confirme.
+
+O log mostra cada migration aplicada, a conferência de RLS (`0 sem RLS`) e o
+login funcionando de ponta a ponta. Se faltar algum segredo, o primeiro passo
+para e diz qual.
+
+> O botão *Run workflow* só aparece depois que este arquivo de workflow estiver
+> no branch padrão do repositório — ou seja, depois que a PR for mesclada.
+> Antes disso, use o caminho B.
+
+Depois, o mesmo workflow serve de manutenção: **status** lista o que já foi
+aplicado e **migrate** aplica migrations novas, sem tocar em mais nada.
+
+### B — pelo terminal (um comando)
 
 ```bash
 cp .env.example .env
@@ -106,40 +147,39 @@ SUPABASE_JWT_SECRET=...
 O `.env` está no `.gitignore` — ele não é versionado.
 
 ```bash
-npm run migrate -- --status   # 14 migrations no repositório · 0 aplicadas · 14 pendentes
-npm run migrate               # aplica todas, cada uma em sua transação
+npm run setup
 ```
 
-Cada migration roda dentro de uma transação: se uma falhar, nada dela fica
-pela metade. Rodar de novo não repete nada — o que já passou fica registrado
-em `migrations.schema_migrations`.
+Ele pergunta o e-mail, a senha (que não aparece na tela), seu nome e o nome da
+empresa, e faz o resto:
 
-A última migration confere sozinha se **toda** tabela de negócio tem RLS
-ligada, e falha se faltar alguma. Terminar sem erro já é a prova de que o
-isolamento entre organizações está de pé no banco, não só na API.
-
-Confira no Supabase (**Table Editor**): 34 tabelas, todas com o cadeado
-*RLS enabled*.
-
----
-
-## 3. Criar o dono e a organização
-
-Ainda local, com o mesmo `.env`:
-
-```bash
-OWNER_EMAIL=danireuxxxx@gmail.com \
-OWNER_PASSWORD='uma-senha-forte' \
-OWNER_NAME='Danilo Reux' \
-ORGANIZATION_NAME='IA.centrism' \
-npm run bootstrap
+```
+[1/4] Configuração
+  ✓ banco: postgresql://***@db.<ref>.supabase.co:5432/postgres
+[2/4] Schema
+  ✓ conectado — PostgreSQL 17.4
+  · aplicando 14 de 14 migrations
+  ✓ 34 tabelas · 126 policies · 0 sem RLS
+[3/4] Dono e organização
+  ✓ organização criada: IA.centrism
+  ✓ funil padrão criado com 8 etapas
+  ✓ catálogo criado com 6 soluções
+[4/4] Conferência
+  ✓ login
+  ✓ perfil — OWNER em IA.centrism
+  ✓ cálculos financeiros respondendo
 ```
 
-Isso cria, de uma vez: o usuário no Supabase Auth, o perfil, a organização,
-o vínculo de `OWNER`, o funil comercial com as oito etapas e o catálogo
-inicial de soluções. Rodar duas vezes não duplica nada.
+Se preferir os passos separados, eles continuam existindo:
+`npm run migrate` (só o schema, `-- --status` para conferir) e
+`npm run bootstrap` (só o dono e a organização).
 
-Essa é a senha com que você entra no CRM.
+### O que essa etapa garante
+
+Cada migration roda dentro de uma transação: se uma falhar, nada dela fica pela
+metade. A última confere sozinha se **toda** tabela de negócio tem RLS ligada e
+falha se faltar alguma — terminar sem erro já é a prova de que o isolamento
+entre organizações está de pé no banco, não só na API.
 
 > **Ambiente de demonstração:** para ver o CRM cheio (20 empresas, 50 leads,
 > 15 projetos, custos e receitas que fecham na mão), use `npm run seed` — em
@@ -149,7 +189,7 @@ Essa é a senha com que você entra no CRM.
 
 ---
 
-## 4. Publicar a API
+## 3. Publicar a API
 
 O `Dockerfile` está pronto: build em duas etapas, imagem final só com o que
 roda, usuário sem privilégio e `HEALTHCHECK` em `/health`.
@@ -169,7 +209,7 @@ roda, usuário sem privilégio e `HEALTHCHECK` em `/health`.
    | `SUPABASE_ANON_KEY` | chave `anon` |
    | `SUPABASE_SERVICE_ROLE_KEY` | chave `service_role` |
    | `SUPABASE_JWT_SECRET` | JWT secret |
-   | `CORS_ORIGINS` | deixe `http://localhost:5173` por enquanto — o domínio da Vercel entra no passo 6 |
+   | `CORS_ORIGINS` | deixe `http://localhost:5173` por enquanto — o domínio da Vercel entra no passo 5 |
 
 4. **Create** e espere o build. No fim, anote a URL:
    `https://iacentrism-crm-api.onrender.com`
@@ -193,7 +233,7 @@ Sem Docker, também funciona: `npm ci && npm run build && npm start`.
 
 ---
 
-## 5. Publicar o frontend
+## 4. Publicar o frontend
 
 1. [vercel.com/new](https://vercel.com/new) → importar `danireuxxxx-png/susu`
 2. **Root Directory: `crm-ia`** (botão *Edit*) — o repositório guarda mais de
@@ -217,7 +257,7 @@ Sem Docker, também funciona: `npm ci && npm run build && npm start`.
 
 ---
 
-## 6. Fechar o circuito (CORS)
+## 5. Fechar o circuito (CORS)
 
 A API só aceita chamadas dos domínios que você listar. Volte ao Render →
 serviço → **Environment** e ajuste:
@@ -239,7 +279,7 @@ API=https://iacentrism-crm-api.onrender.com
 # 1. A API responde
 curl -s $API/health
 
-# 2. O login funciona (a senha do passo 3)
+# 2. O login funciona (a senha do passo 2)
 TOKEN=$(curl -s -X POST $API/api/v1/auth/login \
   -H 'content-type: application/json' \
   -d '{"email":"danireuxxxx@gmail.com","password":"uma-senha-forte"}' \
@@ -253,7 +293,7 @@ curl -s $API/api/v1/dashboard/summary -H "authorization: Bearer $TOKEN"
 ```
 
 E no navegador: abra o domínio da Vercel, entre com o e-mail e a senha do
-passo 3. Um CRM recém-criado abre vazio — crie uma empresa, um lead e um
+passo 2. Um CRM recém-criado abre vazio — crie uma empresa, um lead e um
 projeto com um custo para ver a margem aparecer.
 
 ---
@@ -264,7 +304,7 @@ projeto com um custo para ver a margem aparecer.
 |---|---|
 | código da API | push no branch → Render rebuilda sozinho |
 | código do frontend | push → Vercel rebuilda sozinho |
-| **schema** (nova migration) | rode `npm run migrate` com a connection string **direta** *antes* de o novo código da API subir |
+| **schema** (nova migration) | Actions → *CRM — banco* → **migrate**, ou `npm run migrate` com a connection string **direta** — *antes* de o novo código da API subir |
 
 Nunca edite uma migration que já rodou — o `migrate` avisa quando o conteúdo
 de uma aplicada mudou, e não reaplica. Crie uma nova.
@@ -276,8 +316,8 @@ de uma aplicada mudou, e não reaplica. Crie uma nova.
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` existe só no ambiente da API — nunca na Vercel, nunca no repositório
 - [ ] `CORS_ORIGINS` com os domínios reais, sem `*`
 - [ ] `DATABASE_SSL=require` e pooler (`6543`) na API
-- [ ] `npm run migrate` terminou sem erro (é a conferência de RLS de todas as tabelas)
-- [ ] `.env` fora do git (já está no `.gitignore`)
+- [ ] o passo 2 terminou sem erro e com `0 sem RLS` (é a conferência de todas as tabelas)
+- [ ] `.env` fora do git (já está no `.gitignore`); pelo caminho A, nenhum segredo sai do cofre do GitHub
 - [ ] Backups e PITR ligados no Supabase (**Database → Backups**)
 - [ ] Senha do dono trocada se você a digitou em algum lugar compartilhado
 
@@ -295,7 +335,7 @@ o Auth. Se o login passa mas as chamadas seguintes dão 401, o
 `SUPABASE_JWT_SECRET` é que está errado.
 
 **`/auth/me` responde, mas tudo o mais vem vazio**
-O usuário não tem organização. Rode o passo 3 de novo (é idempotente).
+O usuário não tem organização. Rode o passo 2 de novo (é idempotente).
 
 **Migration falha com `cannot run inside a transaction block` ou a conexão cai**
 Você usou o pooler (`6543`). Migrations pedem a conexão direta (`5432`).
