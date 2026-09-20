@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "migrate": "tsx scripts/migrate.ts",
     "bootstrap": "tsx scripts/bootstrap-owner.ts",
-    "setup": "tsx scripts/setup.ts"
+    "setup": "tsx scripts/setup.ts",
+    "smoke": "tsx scripts/smoke.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",

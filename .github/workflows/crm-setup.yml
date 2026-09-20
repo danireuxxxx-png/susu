@@ -17,6 +17,7 @@ on:
           - status     # só conferir o que já foi aplicado
           - migrate    # aplicar as migrations pendentes
           - setup      # migrations + dono/organização + conferência
+          - conferir   # testar um ambiente já publicado (API e site)
       organizacao:
         description: 'Nome da empresa (só na ação setup)'
         type: string
@@ -27,6 +28,14 @@ on:
         type: string
         required: false
         default: Administrador
+      api_url:
+        description: 'Endereço da API publicada (só na ação conferir)'
+        type: string
+        required: false
+      site_url:
+        description: 'Endereço do site na Vercel (só na ação conferir)'
+        type: string
+        required: false
 
 concurrency: crm-banco
 
@@ -49,6 +58,8 @@ jobs:
       OWNER_PASSWORD: ${{ secrets.OWNER_PASSWORD }}
       OWNER_NAME: ${{ inputs.nome_do_dono }}
       ORGANIZATION_NAME: ${{ inputs.organizacao }}
+      API_URL: ${{ inputs.api_url }}
+      SITE_URL: ${{ inputs.site_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +75,14 @@ jobs:
       - name: Conferir os segredos
         run: |
           faltando=()
+          if [ "${{ inputs.acao }}" = "conferir" ]; then
+            if [ -z "$API_URL" ]; then
+              echo "A ação 'conferir' precisa do campo api_url." >&2
+              exit 1
+            fi
+            echo "Conferindo ambiente publicado."
+            exit 0
+          fi
           [ -n "$DATABASE_URL" ] || faltando+=("SUPABASE_DB_URL")
           if [ "${{ inputs.acao }}" = "setup" ]; then
             [ -n "$SUPABASE_URL" ] || faltando+=("SUPABASE_URL")
@@ -89,6 +108,10 @@ jobs:
       - name: Instalação completa
         if: inputs.acao == 'setup'
         run: npm run setup
+
+      - name: Conferir ambiente publicado
+        if: inputs.acao == 'conferir'
+        run: npm run smoke
 
       - name: Resumo
         if: always()

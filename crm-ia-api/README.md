@@ -319,6 +319,7 @@ painel do Supabase.
 | `npm run migrate` | só o schema; `-- --status` apenas lista o estado |
 | `npm run bootstrap` | só o dono: usuário, organização, funil de 8 etapas e catálogo |
 | `npm run build` · `npm start` | compila para `dist/` e roda o servidor |
+| `npm run smoke` | confere um ambiente publicado de fora: saúde, login, cálculos, site e CORS |
 
 Todos são idempotentes: rodar de novo não duplica nada.
 

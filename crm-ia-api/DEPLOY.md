@@ -273,6 +273,23 @@ Vercel (uma URL por push), inclua também o domínio de preview que você usar.
 
 ## Conferência final
 
+Um comando confere o ambiente publicado de fora, como um usuário faria —
+saúde da API, login, cálculos financeiros, site no ar e CORS liberado:
+
+```bash
+API_URL=https://iacentrism-crm-api.onrender.com \
+SITE_URL=https://<projeto>.vercel.app \
+OWNER_EMAIL=voce@empresa.com OWNER_PASSWORD='...' \
+npm run smoke
+```
+
+Pelo navegador, é a ação **conferir** do workflow *CRM — banco* (preencha
+*api_url* e *site_url*). Ele sai com erro e diz qual configuração ajustar
+quando algo não responde.
+
+<details>
+<summary>Na mão, se preferir</summary>
+
 ```bash
 API=https://iacentrism-crm-api.onrender.com
 
@@ -291,6 +308,8 @@ curl -s $API/api/v1/auth/me -H "authorization: Bearer $TOKEN"
 # 4. Os cálculos financeiros vêm do backend
 curl -s $API/api/v1/dashboard/summary -H "authorization: Bearer $TOKEN"
 ```
+
+</details>
 
 E no navegador: abra o domínio da Vercel, entre com o e-mail e a senha do
 passo 2. Um CRM recém-criado abre vazio — crie uma empresa, um lead e um
