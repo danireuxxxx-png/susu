@@ -19,7 +19,9 @@
     "migrate": "tsx scripts/migrate.ts",
     "bootstrap": "tsx scripts/bootstrap-owner.ts",
     "setup": "tsx scripts/setup.ts",
-    "smoke": "tsx scripts/smoke.ts"
+    "smoke": "tsx scripts/smoke.ts",
+    "build:sql": "tsx scripts/build-sql-installer.ts",
+    "verify:sql": "tsx scripts/verify-installer.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",

@@ -18,7 +18,7 @@ Supabase — o schema inteiro vem das migrations versionadas.
 
 - [Antes de começar](#antes-de-começar)
 - [1. Supabase](#1-supabase)
-- [2. Instalar o banco](#2-instalar-o-banco) — [pelo navegador](#a-pelo-navegador-github-actions) ou [pelo terminal](#b-pelo-terminal-um-comando)
+- [2. Instalar o banco](#2-instalar-o-banco) — [pelo painel](#a-pelo-painel-do-supabase-copiar-e-colar), [pelo GitHub](#b-pelo-github-actions) ou [pelo terminal](#c-pelo-terminal-um-comando)
 - [3. Publicar a API](#3-publicar-a-api)
 - [4. Publicar o frontend](#4-publicar-o-frontend)
 - [5. Fechar o circuito (CORS)](#5-fechar-o-circuito-cors)
@@ -43,10 +43,11 @@ O passo 2 (instalar o banco) roda uma vez só, e tem dois caminhos — **escolha
 
 | Caminho | Precisa de | Bom quando |
 |---|---|---|
-| **A — navegador** | nada instalado; os segredos ficam no cofre do GitHub | você não quer mexer em terminal |
-| **B — terminal** | Node 20.19+ e o repositório clonado | você já está com o projeto aberto |
+| **A — painel do Supabase** | nada além do próprio Supabase: copiar e colar | é o mais simples, e o que não pode dar errado |
+| **B — GitHub Actions** | cadastrar 6 segredos no repositório | você quer repetir a instalação sem colar nada |
+| **C — terminal** | Node 20.19+ e o repositório clonado | você já está com o projeto aberto |
 
-Para o caminho B:
+Para o caminho C:
 
 ```bash
 git clone https://github.com/danireuxxxx-png/susu.git
@@ -108,7 +109,43 @@ o funil comercial com as oito etapas e o catálogo de soluções — e conferir 
 o conjunto responde. É **idempotente**: rodar de novo não duplica nada, então
 não há como "instalar errado" e ter de recomeçar.
 
-### A — pelo navegador (GitHub Actions)
+### A — pelo painel do Supabase (copiar e colar)
+
+Dois arquivos, duas colagens. Não precisa de terminal, de connection string,
+de senha do banco nem de GitHub.
+
+1. **Crie seu usuário**: painel do Supabase → **Authentication → Users →
+   Add user → Create new user**. Informe e-mail e senha e marque
+   **Auto Confirm User** (sem isso o login não passa).
+
+2. **Instale o schema**: abra
+   [`supabase/instalar/1-banco.sql`](supabase/instalar/1-banco.sql), copie o
+   arquivo inteiro (no GitHub, botão *Copy raw file*), cole no **SQL Editor**
+   do Supabase e clique em **Run**.
+
+   São as 14 migrations dentro de **uma transação**: ou tudo entra, ou nada
+   entra. No fim aparece a conferência:
+
+   | tabelas | policies | sem_rls |
+   |---|---|---|
+   | 34 | 126 | **0** |
+
+   `sem_rls` em zero é a prova de que nenhuma tabela ficou sem isolamento.
+   Rodar o arquivo duas vezes não estraga nada: a segunda vez para com
+   *"O banco já está instalado — nada foi alterado."*
+
+3. **Crie sua organização**: abra
+   [`supabase/instalar/2-dono.sql`](supabase/instalar/2-dono.sql), troque o
+   e-mail na terceira linha pelo que você usou no passo 1, cole no SQL Editor
+   e **Run**. Ele cria a organização, o funil de 8 etapas e o catálogo, e
+   mostra uma linha com seu e-mail e o papel `OWNER`.
+
+Pronto — o banco está instalado. Os dois arquivos são gerados a partir das
+mesmas migrations (`npm run build:sql`) e conferidos contra um Postgres de
+verdade a cada mudança (`npm run verify:sql`), então não saem de sincronia
+com o resto do projeto.
+
+### B — pelo GitHub Actions
 
 Quem roda é o GitHub; os segredos ficam no cofre do repositório e nunca passam
 por e-mail, chat ou pela sua máquina.
@@ -146,7 +183,7 @@ para e diz qual.
 Depois, o mesmo workflow serve de manutenção: **status** lista o que já foi
 aplicado e **migrate** aplica migrations novas, sem tocar em mais nada.
 
-### B — pelo terminal (um comando)
+### C — pelo terminal (um comando)
 
 ```bash
 cp .env.example .env
