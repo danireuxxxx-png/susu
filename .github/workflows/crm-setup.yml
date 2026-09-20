@@ -1,0 +1,185 @@
+# Instala e mantém o banco do IA.centrism CRM sem precisar de nada na
+# máquina de ninguém: o GitHub roda, os segredos ficam no cofre do
+# repositório (Settings → Secrets and variables → Actions).
+#
+# Dois jeitos de disparar:
+#   · Actions → "CRM — banco" → Run workflow  (aparece quando este arquivo
+#     estiver no branch padrão)
+#   · empurrando um branch `banco/<ação>` ou uma tag `banco-<ação>`
+#     (ex.: `banco/setup`, ou `banco/setup-2` para repetir) — funciona a
+#     partir de qualquer código, que é como a instalação roda antes de a
+#     PR ser mesclada. O branch é descartável: some depois de rodar.
+name: CRM — banco
+
+on:
+  workflow_dispatch:
+    inputs:
+      acao:
+        description: 'O que fazer'
+        type: choice
+        required: true
+        default: diagnostico
+        options:
+          - diagnostico # conferir quais segredos já estão cadastrados
+          - status      # listar o que já foi aplicado no banco
+          - migrate     # aplicar as migrations pendentes
+          - setup       # migrations + dono/organização + conferência
+          - conferir    # testar um ambiente já publicado (API e site)
+      organizacao:
+        description: 'Nome da empresa (só na ação setup)'
+        type: string
+        required: false
+      nome_do_dono:
+        description: 'Nome do dono (só na ação setup)'
+        type: string
+        required: false
+      api_url:
+        description: 'Endereço da API publicada (só na ação conferir)'
+        type: string
+        required: false
+      site_url:
+        description: 'Endereço do site na Vercel (só na ação conferir)'
+        type: string
+        required: false
+  push:
+    branches:
+      - 'banco/*'
+    tags:
+      - 'banco-*'
+
+concurrency: crm-banco
+
+permissions:
+  contents: read
+
+jobs:
+  banco:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crm-ia-api
+    env:
+      # Session pooler do Supabase (porta 5432): migrations são DDL em
+      # transação, o que o Transaction pooler (6543) não aceita — e a
+      # conexão direta só existe em IPv6, que o runner do GitHub não tem.
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+      DATABASE_SSL: require
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_JWT_SECRET: ${{ secrets.SUPABASE_JWT_SECRET }}
+      OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
+      OWNER_PASSWORD: ${{ secrets.OWNER_PASSWORD }}
+      OWNER_NAME: ${{ inputs.nome_do_dono || vars.OWNER_NAME || 'Administrador' }}
+      ORGANIZATION_NAME: ${{ inputs.organizacao || vars.ORGANIZATION_NAME || 'IA.centrism' }}
+      API_URL: ${{ inputs.api_url || vars.API_URL }}
+      SITE_URL: ${{ inputs.site_url || vars.SITE_URL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # A ação vem do formulário ou do nome da tag (`banco-setup` → setup).
+      - name: Resolver a ação
+        id: modo
+        working-directory: .
+        run: |
+          acao="${{ inputs.acao }}"
+          if [ -z "$acao" ]; then
+            acao="${GITHUB_REF_NAME#banco/}"
+            acao="${acao#banco-}"
+            # `banco/setup-2` é a mesma ação: o sufixo só serve para repetir
+            # um disparo já feito.
+            acao="${acao%%-*}"
+          fi
+          case "$acao" in
+            diagnostico|status|migrate|setup|conferir) ;;
+            *) echo "Ação desconhecida: '$acao'." >&2; exit 1 ;;
+          esac
+          echo "acao=$acao" >> "$GITHUB_OUTPUT"
+          echo "Ação: $acao"
+
+      # Presença, nunca conteúdo: o log não mostra nem um pedaço de segredo.
+      - name: Conferir os segredos
+        id: segredos
+        working-directory: .
+        run: |
+          marca() { if [ -n "$2" ]; then echo "| \`$1\` | ✅ cadastrado |"; else echo "| \`$1\` | ❌ falta |"; fi; }
+          {
+            echo "### Segredos do repositório"
+            echo ""
+            echo "| Secret | Situação |"
+            echo "|---|---|"
+            marca SUPABASE_DB_URL "$DATABASE_URL"
+            marca SUPABASE_URL "$SUPABASE_URL"
+            marca SUPABASE_ANON_KEY "$SUPABASE_ANON_KEY"
+            marca SUPABASE_SERVICE_ROLE_KEY "$SUPABASE_SERVICE_ROLE_KEY"
+            marca OWNER_EMAIL "$OWNER_EMAIL"
+            marca OWNER_PASSWORD "$OWNER_PASSWORD"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+          faltando=()
+          case "${{ steps.modo.outputs.acao }}" in
+            status|migrate)
+              [ -n "$DATABASE_URL" ] || faltando+=("SUPABASE_DB_URL")
+              ;;
+            setup)
+              [ -n "$DATABASE_URL" ] || faltando+=("SUPABASE_DB_URL")
+              [ -n "$SUPABASE_URL" ] || faltando+=("SUPABASE_URL")
+              [ -n "$SUPABASE_ANON_KEY" ] || faltando+=("SUPABASE_ANON_KEY")
+              [ -n "$SUPABASE_SERVICE_ROLE_KEY" ] || faltando+=("SUPABASE_SERVICE_ROLE_KEY")
+              [ -n "$OWNER_EMAIL" ] || faltando+=("OWNER_EMAIL")
+              [ -n "$OWNER_PASSWORD" ] || faltando+=("OWNER_PASSWORD")
+              ;;
+            conferir)
+              [ -n "$API_URL" ] || faltando+=("api_url (campo do formulário ou variável API_URL)")
+              ;;
+          esac
+
+          if [ ${#faltando[@]} -gt 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Falta cadastrar:** ${faltando[*]}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Faltam segredos para a ação '${{ steps.modo.outputs.acao }}': ${faltando[*]}" >&2
+            echo "Cadastre em Settings → Secrets and variables → Actions." >&2
+            exit 1
+          fi
+
+          if [ "${{ steps.modo.outputs.acao }}" = "diagnostico" ]; then
+            echo "A tabela acima é o retrato do cofre — o diagnóstico não exige nada."
+            echo "Faltando algum, cadastre em Settings → Secrets and variables → Actions."
+          else
+            echo "Tudo o que esta ação precisa está cadastrado."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.modo.outputs.acao != 'diagnostico'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: crm-ia-api/package-lock.json
+
+      - name: Instalar dependências
+        if: steps.modo.outputs.acao != 'diagnostico'
+        run: npm ci
+
+      - name: Status do banco
+        if: steps.modo.outputs.acao == 'status'
+        run: npm run migrate -- --status
+
+      - name: Aplicar migrations
+        if: steps.modo.outputs.acao == 'migrate'
+        run: npm run migrate
+
+      - name: Instalação completa
+        if: steps.modo.outputs.acao == 'setup'
+        run: npm run setup
+
+      - name: Conferir ambiente publicado
+        if: steps.modo.outputs.acao == 'conferir'
+        run: npm run smoke
+
+      - name: Resumo
+        if: always()
+        working-directory: .
+        run: |
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Ação \`${{ steps.modo.outputs.acao }}\` terminou com status **${{ job.status }}**." >> "$GITHUB_STEP_SUMMARY"

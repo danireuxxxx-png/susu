@@ -1,0 +1,46 @@
+{
+  "name": "crm-ia-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:local": "tsx scripts/local-db.ts",
+    "db:reset": "tsx scripts/reset-db.ts",
+    "seed": "tsx scripts/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "migrate": "tsx scripts/migrate.ts",
+    "bootstrap": "tsx scripts/bootstrap-owner.ts",
+    "setup": "tsx scripts/setup.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "build:sql": "tsx scripts/build-sql-installer.ts",
+    "verify:sql": "tsx scripts/verify-installer.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.1",
+    "@fastify/rate-limit": "^11.2.0",
+    "@fastify/under-pressure": "^9.2.0",
+    "@supabase/supabase-js": "^2.116.0",
+    "dotenv": "^18.0.1",
+    "fastify": "^5.12.5",
+    "postgres": "^3.4.9",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@electric-sql/pglite-socket": "^0.2.11",
+    "@types/node": "^26.6.2",
+    "pino-pretty": "^13.1.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}
