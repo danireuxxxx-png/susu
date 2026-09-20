@@ -138,9 +138,10 @@ para e diz qual.
 
 > O botão *Run workflow* só aparece depois que este arquivo de workflow estiver
 > no branch padrão do repositório — ou seja, depois que a PR for mesclada. Antes
-> disso, o mesmo workflow roda por tag: `git tag banco-setup && git push origin
-> banco-setup` dispara a instalação a partir de qualquer branch (acrescente um
-> sufixo — `banco-setup-2` — para repetir uma tag já usada).
+> disso, o mesmo workflow roda por push: um branch `banco/setup` (ou a tag
+> `banco-setup`) dispara a instalação a partir de qualquer código. O branch é
+> descartável — dá para apagar assim que o job terminar — e um sufixo,
+> `banco/setup-2`, serve para repetir um disparo já feito.
 
 Depois, o mesmo workflow serve de manutenção: **status** lista o que já foi
 aplicado e **migrate** aplica migrations novas, sem tocar em mais nada.
