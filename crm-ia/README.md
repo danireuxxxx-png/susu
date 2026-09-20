@@ -4,10 +4,14 @@ CRM SaaS para uma empresa que vende soluções de IA e automação: pipeline com
 carteira de clientes, financeiro, metas e as telas dos agentes de IA (WhatsApp e
 jornal matinal).
 
-**Esta é a etapa de frontend.** Não existe backend, banco, autenticação, integração
-com WhatsApp nem chamada a modelos de IA. Tudo roda com dados mockados coerentes e
-interações reais em memória — mas a arquitetura já está organizada para que a
-troca por uma API seja feita em um único lugar.
+O app roda em **dois modos**, decididos pela variável `VITE_API_URL`: sem ela, sobre
+uma base mockada coerente, sem login (bom para demonstrar); com ela, conectado ao
+backend real em [`crm-ia-api`](../crm-ia-api), com autenticação do Supabase e os
+cálculos financeiros vindos prontos do servidor. Veja
+[Conectado ao backend](#conectado-ao-backend).
+
+Ainda **não há integração com WhatsApp nem chamada a modelos de IA** — essas telas
+existem, alimentadas pelos dados que o backend já guarda para elas.
 
 ## Rodando
 
@@ -64,10 +68,16 @@ painel é apontar a raiz:
 2. **Root Directory: `crm-ia`** (botão *Edit*, selecione a pasta) — sem isso o build
    roda na raiz do repositório e falha
 3. Framework *Vite* é detectado sozinho; build e saída vêm do `vercel.json`
-4. Nenhuma variável de ambiente é necessária: nesta etapa o app é só frontend
+4. **Environment Variables**: defina `VITE_API_URL` com a base da API
+   (`https://<sua-api>/api/v1`) para publicar o modo conectado. Sem ela, o deploy
+   sai em modo demonstração, sobre a base mockada. Variável adicionada depois só
+   vale a partir do próximo deploy.
 
 Depois disso, cada push no branch gera um *preview* e o merge no branch padrão publica
 em produção.
+
+O passo a passo da stack inteira — Supabase, API e este frontend — está em
+[`crm-ia-api/DEPLOY.md`](../crm-ia-api/DEPLOY.md).
 
 > Os projetos `susu` e `susu-ncgv` que já existem na Vercel fazem deploy dos outros
 > apps do repositório e falham por conta própria desde antes deste CRM existir.

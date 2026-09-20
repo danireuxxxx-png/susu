@@ -18,6 +18,8 @@ export interface ListOptions {
   searchColumns?: string[]
   sortable: string[]
   defaultSort: string
+  /** Direção padrão quando o cliente não pede uma (etapas: crescente). */
+  defaultDirection?: 'asc' | 'desc'
   filters?: FilterMap
   /** Filtros de intervalo de data: parâmetro → coluna. */
   dateColumn?: string
@@ -83,13 +85,14 @@ export async function listRecords<T extends Record<string, unknown>>(
     ? toSnakeCase(pagination.sort)
     : options.defaultSort
 
+  const direction = pagination.sort ? pagination.direction : (options.defaultDirection ?? pagination.direction)
   const offset = (pagination.page - 1) * pagination.limit
 
   const rows = await tx<T[]>`
     select ${tx.unsafe(options.columns ?? '*')}
     from ${tx(options.table)}
     where ${where}
-    order by ${tx(sortColumn)} ${pagination.direction === 'asc' ? tx`asc` : tx`desc`}
+    order by ${tx(sortColumn)} ${direction === 'asc' ? tx`asc` : tx`desc`}
     limit ${pagination.limit}
     offset ${offset}
   `

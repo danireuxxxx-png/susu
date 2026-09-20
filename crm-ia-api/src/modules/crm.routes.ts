@@ -191,6 +191,7 @@ export const crmRoutes = async (app: FastifyInstance) => {
       searchColumns: ['name'],
       sortable: ['position', 'name'],
       defaultSort: 'position',
+      defaultDirection: 'asc',
       filters: { pipelineId: 'pipeline_id' },
       softDelete: false,
     },

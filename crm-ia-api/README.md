@@ -9,6 +9,9 @@ Nesta etapa **não há agentes de IA nem integração com WhatsApp** — só a f
 de dados, CRM, projetos, custos, rentabilidade e as tabelas preparadas para essas
 automações entrarem depois.
 
+> **Colocar no ar:** o runbook completo (Supabase → API → frontend) está em
+> [DEPLOY.md](DEPLOY.md).
+
 ---
 
 ## Índice
@@ -20,7 +23,7 @@ automações entrarem depois.
 - [Banco: migrations e seed](#banco-migrations-e-seed)
 - [API](#api)
 - [Testes](#testes)
-- [Produção](#produção)
+- [Produção](#produção) · [runbook completo](DEPLOY.md)
 - [Variáveis de ambiente](#variáveis-de-ambiente)
 
 ---
@@ -165,6 +168,7 @@ Tudo é versionado em `supabase/migrations` — nenhuma alteração depende do p
 | `…001100_rls` | RLS e policies de todas as tabelas + conferência automática |
 | `…001200_storage` | buckets e policies do Supabase Storage |
 | `…001300_goal_progress` | metas com o realizado calculado dos dados |
+| `…001400_economics_series` | séries mensais de receita, custo e lucro para os gráficos |
 
 O seed cria 1 organização (+1 para provar isolamento), 6 usuários, 20 empresas,
 30 contatos, 50 leads, 30 oportunidades, **15 projetos em 10 clientes**, 41 linhas
@@ -278,7 +282,7 @@ Filtros conforme o recurso: `status`, `ownerId`, `companyId`, `projectId`,
 npm test
 ```
 
-48 testes rodam contra um **Postgres real** (PGlite) com migrations e seed
+50 testes rodam contra um **Postgres real** (PGlite) com migrations e seed
 aplicados — o caminho completo HTTP → Fastify → SQL → RLS:
 
 - **auth** — token ausente, adulterado e expirado; perfil; papéis (SALES não toca no financeiro, FINANCE não cria empresa, SALES não lê auditoria);
@@ -290,23 +294,37 @@ aplicados — o caminho completo HTTP → Fastify → SQL → RLS:
 
 ## Produção
 
-1. Crie o projeto no Supabase e aplique o schema:
-   ```bash
-   supabase link --project-ref <ref>
-   supabase db push
-   ```
-2. Configure as variáveis de ambiente (abaixo) no serviço que hospeda a API.
-3. Suba a API:
-   ```bash
-   npm run build && npm start
-   ```
+O passo a passo completo — do projeto no Supabase até o CRM aberto no
+navegador — está em **[DEPLOY.md](DEPLOY.md)**. Em resumo:
+
+```bash
+# 1. Schema, com a connection string DIRETA do Supabase (porta 5432)
+npm run migrate
+
+# 2. Dono, organização, funil e catálogo (idempotente)
+OWNER_EMAIL=voce@empresa.com OWNER_PASSWORD='...' \
+ORGANIZATION_NAME='IA.centrism' npm run bootstrap
+
+# 3. API, com a string do POOLER (porta 6543)
+docker build -t iacentrism-crm-api .   # ou npm run build && npm start
+```
+
+O `render.yaml` sobe isso como blueprint no Render; o `Dockerfile` serve
+qualquer plataforma que rode container. Nenhum passo depende de mexer no
+painel do Supabase.
+
+| Script | O que faz |
+|---|---|
+| `npm run migrate` | aplica as migrations pendentes, cada uma em sua transação; `-- --status` só lista |
+| `npm run bootstrap` | cria usuário dono, organização, funil de 8 etapas e catálogo de soluções |
+| `npm run build` · `npm start` | compila para `dist/` e roda o servidor |
 
 Checklist antes de ir ao ar:
 
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` só no servidor — nunca no frontend
 - [ ] `CORS_ORIGINS` com os domínios reais
-- [ ] `DATABASE_SSL=require` e connection string do **pooler** (6543)
-- [ ] `supabase db push` aplicado (a migration de RLS falha se faltar policy)
+- [ ] `DATABASE_SSL=require` e connection string do **pooler** (6543) na API
+- [ ] `npm run migrate` sem erro (a migration de RLS falha se faltar policy)
 - [ ] backups e PITR ativos no Supabase
 
 ---

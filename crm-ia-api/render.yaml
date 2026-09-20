@@ -1,0 +1,36 @@
+# Blueprint do Render — "New → Blueprint" apontando para este repositório.
+#
+# As variáveis marcadas como sync:false são pedidas na hora do deploy e
+# ficam guardadas no painel, nunca no repositório.
+services:
+  - type: web
+    name: iacentrism-crm-api
+    runtime: docker
+    rootDir: crm-ia-api
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3333
+      - key: LOG_LEVEL
+        value: info
+      # Pooler do Supabase (porta 6543) para a API.
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: require
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      # Domínio do frontend na Vercel.
+      - key: CORS_ORIGINS
+        sync: false
