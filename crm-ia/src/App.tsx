@@ -1,6 +1,9 @@
 import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/layout/app-shell'
+import { useSession } from '@/hooks/use-session'
+import { CrmProvider } from '@/store/crm-provider'
+import { LoginPage } from '@/pages/login'
 
 /**
  * Cada rota vira um chunk proprio: o dashboard nao carrega o Kanban, e as
@@ -28,25 +31,32 @@ const SettingsPage = lazy(() => import('@/pages/settings').then((m) => ({ defaul
 const NotFoundPage = lazy(() => import('@/pages/not-found').then((m) => ({ default: m.NotFoundPage })))
 
 export default function App() {
+  const { session, demoMode } = useSession()
+
+  // Sem backend configurado o app roda sobre a base mockada, sem login.
+  if (!demoMode && !session) return <LoginPage />
+
   return (
-    <Routes>
-      <Route element={<AppShell />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/pipeline" element={<PipelinePage />} />
-        <Route path="/leads" element={<LeadsPage />} />
-        <Route path="/clientes" element={<CustomersPage />} />
-        <Route path="/empresas" element={<CompaniesPage />} />
-        <Route path="/empresas/:id" element={<CompanyDetailPage />} />
-        <Route path="/atividades" element={<ActivitiesPage />} />
-        <Route path="/financeiro" element={<FinancePage />} />
-        <Route path="/metas" element={<GoalsPage />} />
-        <Route path="/agentes" element={<AgentsPage />} />
-        <Route path="/agentes/whatsapp" element={<WhatsAppAgentPage />} />
-        <Route path="/jornal-matinal" element={<MorningBriefingPage />} />
-        <Route path="/configuracoes" element={<SettingsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <CrmProvider>
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/pipeline" element={<PipelinePage />} />
+          <Route path="/leads" element={<LeadsPage />} />
+          <Route path="/clientes" element={<CustomersPage />} />
+          <Route path="/empresas" element={<CompaniesPage />} />
+          <Route path="/empresas/:id" element={<CompanyDetailPage />} />
+          <Route path="/atividades" element={<ActivitiesPage />} />
+          <Route path="/financeiro" element={<FinancePage />} />
+          <Route path="/metas" element={<GoalsPage />} />
+          <Route path="/agentes" element={<AgentsPage />} />
+          <Route path="/agentes/whatsapp" element={<WhatsAppAgentPage />} />
+          <Route path="/jornal-matinal" element={<MorningBriefingPage />} />
+          <Route path="/configuracoes" element={<SettingsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </CrmProvider>
   )
 }

@@ -9,6 +9,7 @@ import {
   DropdownSeparator,
   DropdownTrigger,
 } from '@/components/ui/dropdown'
+import { useSession } from '@/hooks/use-session'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
 import type { TeamMember } from '@/types'
@@ -21,6 +22,7 @@ interface UserMenuProps {
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { demoMode, signOut } = useSession()
 
   return (
     <Dropdown>
@@ -60,13 +62,17 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
         <DropdownSeparator />
         <DropdownItem
           destructive
-          onSelect={() =>
-            toast({
-              title: 'Sessão encerrada',
-              description: 'A autenticação real entra na próxima etapa do projeto.',
-              tone: 'neutro',
-            })
-          }
+          onSelect={() => {
+            if (demoMode) {
+              toast({
+                title: 'Modo demonstração',
+                description: 'Configure VITE_API_URL para entrar com uma conta real.',
+                tone: 'neutro',
+              })
+              return
+            }
+            void signOut()
+          }}
         >
           <LogOut aria-hidden />
           Sair

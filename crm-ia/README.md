@@ -73,6 +73,27 @@ em produção.
 > por isso o caminho recomendado é criar um projeto novo.
 
 
+## Conectado ao backend
+
+O app funciona em dois modos, decididos por uma variável só:
+
+| `VITE_API_URL` | Modo | Comportamento |
+|---|---|---|
+| ausente | demonstração | base mockada em memória, sem login |
+| definida | conectado | fala com a API (`crm-ia-api`), exige autenticação |
+
+```bash
+cp .env.example .env     # VITE_API_URL=http://localhost:3333/api/v1
+npm run dev
+```
+
+No modo conectado:
+
+- a tela de login troca e-mail e senha por uma sessão do Supabase Auth (a senha nunca é guardada no navegador — só os tokens);
+- o token é renovado automaticamente quando expira, e uma renovação atende todas as chamadas em voo;
+- `src/services/backend.service.ts` monta o snapshot do workspace com chamadas paralelas e `src/services/mappers.ts` traduz o modelo da API para os tipos que as telas já usam;
+- as mutações (criar lead, mover oportunidade, agendar atividade, ajustar meta) vão para a API, e os cálculos financeiros vêm prontos do backend — o frontend não soma nada por conta própria.
+
 ## Arquitetura
 
 ```

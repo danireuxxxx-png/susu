@@ -13,7 +13,9 @@ import { createDatabase } from './pg-harness.js'
 const port = Number(process.env.LOCAL_DB_PORT ?? 5433)
 
 const db = await createDatabase({ withSeed: true })
-const server = new PGLiteSocketServer({ db, port, host: '127.0.0.1' })
+// O padrão do PGlite é uma conexão só; a API abre um pool, então o
+// limite precisa acompanhar (as queries continuam serializadas).
+const server = new PGLiteSocketServer({ db, port, host: '127.0.0.1', maxConnections: 30 })
 
 await server.start()
 

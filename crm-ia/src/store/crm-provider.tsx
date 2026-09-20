@@ -78,8 +78,14 @@ export function CrmProvider({ children }: { children: ReactNode }) {
         const saved = await crmService.updateGoal(goal)
         dispatch({ type: 'goal/update', payload: saved })
       },
-      readNotification: (id: string) => dispatch({ type: 'notification/read', payload: id }),
-      readAllNotifications: () => dispatch({ type: 'notification/read-all' }),
+      readNotification: (id: string) => {
+        dispatch({ type: 'notification/read', payload: id })
+        void crmService.readNotification(id)
+      },
+      readAllNotifications: () => {
+        dispatch({ type: 'notification/read-all' })
+        void crmService.readAllNotifications()
+      },
       toggleBriefingTask: (id: string) => dispatch({ type: 'briefing/toggle-task', payload: id }),
     }),
     [state, load],

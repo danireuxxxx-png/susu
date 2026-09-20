@@ -128,3 +128,44 @@ describe('linha de base da operação', () => {
     expect(data.arr).toBe(data.mrr * 12)
   })
 })
+
+describe('série histórica', () => {
+  it('devolve 12 meses com receita, custo e lucro coerentes', async () => {
+    const response = await ctx.app.inject({
+      method: 'GET',
+      url: '/api/v1/financial/history?months=12',
+      headers: authHeaders(ctx.ids.owner!),
+    })
+
+    const rows = response.json().data as {
+      month: string
+      mrr: string
+      total_monthly_cost: string
+      net_profit: string
+    }[]
+
+    expect(rows).toHaveLength(12)
+
+    const current = rows[rows.length - 1]!
+    expect(Number(current.mrr)).toBe(72900)
+    expect(Number(current.net_profit)).toBe(
+      Number(current.mrr) - Number(current.total_monthly_cost),
+    )
+
+    // Meses anteriores ao início dos projetos custam menos: a série
+    // recalcula a vigência de cada custo, não repete o total de hoje.
+    expect(Number(rows[0]!.total_monthly_cost)).toBeLessThan(Number(current.total_monthly_cost))
+  })
+
+  it('entrega a receita diária para os recortes curtos', async () => {
+    const response = await ctx.app.inject({
+      method: 'GET',
+      url: '/api/v1/financial/revenue-daily?days=120',
+      headers: authHeaders(ctx.ids.owner!),
+    })
+
+    const rows = response.json().data as { day: string; billed: string }[]
+    expect(rows.length).toBeGreaterThan(0)
+    expect(Number(rows[0]!.billed)).toBeGreaterThan(0)
+  })
+})

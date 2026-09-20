@@ -190,6 +190,28 @@ export const financialRoutes = async (app: FastifyInstance) => {
     return { data: rows }
   })
 
+  /** Série mensal de MRR, custo e lucro — o gráfico inteiro em uma consulta. */
+  app.get('/financial/history', { preHandler: app.authenticate }, async (request) => {
+    const { months } = z.object({ months: z.coerce.number().int().min(1).max(36).default(12) }).parse(request.query)
+
+    const rows = await withUser({ userId: request.user.id }, (tx) => tx`
+      select * from public.organization_economics_series(${request.organizationId}::uuid, ${months}::int)
+    `)
+
+    return { data: rows }
+  })
+
+  /** Receita por dia, para os recortes curtos do dashboard. */
+  app.get('/financial/revenue-daily', { preHandler: app.authenticate }, async (request) => {
+    const { days } = z.object({ days: z.coerce.number().int().min(1).max(365).default(90) }).parse(request.query)
+
+    const rows = await withUser({ userId: request.user.id }, (tx) => tx`
+      select * from public.revenue_daily_series(${request.organizationId}::uuid, ${days}::int)
+    `)
+
+    return { data: rows }
+  })
+
   /** Custos do mês em uma base única (projeto + operação). */
   app.get('/financial/expenses', { preHandler: app.authenticate }, async (request) => {
     const { reference } = referenceSchema.parse(request.query)

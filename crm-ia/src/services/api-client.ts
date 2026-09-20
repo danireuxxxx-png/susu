@@ -7,7 +7,13 @@
  * servicos continuam identicas — nenhuma tela precisa ser tocada.
  */
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
+
+/**
+ * Com VITE_API_URL definida o app fala com o backend real; sem ela, roda
+ * sobre a base mockada. É a única chave que decide isso.
+ */
+export const isBackendEnabled = Boolean(import.meta.env.VITE_API_URL)
 
 /** Latencia simulada: e o que faz os skeletons existirem de verdade. */
 const DEFAULT_LATENCY = 260

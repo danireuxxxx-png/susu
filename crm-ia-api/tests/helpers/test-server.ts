@@ -38,7 +38,7 @@ export interface TestContext {
 
 export async function startTestServer(port = 5440): Promise<TestContext> {
   const db = await createDatabase({ withSeed: true })
-  const server = new PGLiteSocketServer({ db, port, host: '127.0.0.1' })
+  const server = new PGLiteSocketServer({ db, port, host: '127.0.0.1', maxConnections: 30 })
   await server.start()
 
   process.env.DATABASE_URL = `postgres://postgres:postgres@127.0.0.1:${port}/postgres`

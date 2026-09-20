@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import App from './App'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { CrmProvider } from '@/store/crm-provider'
+import { SessionProvider } from '@/store/session-provider'
 import { ThemeProvider } from '@/store/theme-provider'
 import { ToastProvider } from '@/store/toast-provider'
 import './index.css'
@@ -20,11 +20,11 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <ToastProvider>
         <TooltipProvider delayDuration={260} skipDelayDuration={400}>
-          <CrmProvider>
+          <SessionProvider>
             <Router>
               <App />
             </Router>
-          </CrmProvider>
+          </SessionProvider>
         </TooltipProvider>
       </ToastProvider>
     </ThemeProvider>
