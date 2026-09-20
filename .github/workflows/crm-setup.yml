@@ -143,7 +143,12 @@ jobs:
             exit 1
           fi
 
-          echo "Tudo o que esta ação precisa está cadastrado."
+          if [ "${{ steps.modo.outputs.acao }}" = "diagnostico" ]; then
+            echo "A tabela acima é o retrato do cofre — o diagnóstico não exige nada."
+            echo "Faltando algum, cadastre em Settings → Secrets and variables → Actions."
+          else
+            echo "Tudo o que esta ação precisa está cadastrado."
+          fi
 
       - uses: actions/setup-node@v4
         if: steps.modo.outputs.acao != 'diagnostico'
