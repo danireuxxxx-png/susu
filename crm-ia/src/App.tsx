@@ -17,6 +17,13 @@ const CompaniesPage = lazy(() => import('@/pages/companies').then((m) => ({ defa
 const CompanyDetailPage = lazy(() =>
   import('@/pages/company-detail').then((m) => ({ default: m.CompanyDetailPage })),
 )
+const ProjectsPage = lazy(() => import('@/pages/projects').then((m) => ({ default: m.ProjectsPage })))
+const ProjectDetailPage = lazy(() =>
+  import('@/pages/project-detail').then((m) => ({ default: m.ProjectDetailPage })),
+)
+const ProfitabilityPage = lazy(() =>
+  import('@/pages/profitability').then((m) => ({ default: m.ProfitabilityPage })),
+)
 const ActivitiesPage = lazy(() => import('@/pages/activities').then((m) => ({ default: m.ActivitiesPage })))
 const FinancePage = lazy(() => import('@/pages/finance').then((m) => ({ default: m.FinancePage })))
 const GoalsPage = lazy(() => import('@/pages/goals').then((m) => ({ default: m.GoalsPage })))
@@ -47,8 +54,11 @@ export default function App() {
           <Route path="/clientes" element={<CustomersPage />} />
           <Route path="/empresas" element={<CompaniesPage />} />
           <Route path="/empresas/:id" element={<CompanyDetailPage />} />
+          <Route path="/projetos" element={<ProjectsPage />} />
+          <Route path="/projetos/:id" element={<ProjectDetailPage />} />
           <Route path="/atividades" element={<ActivitiesPage />} />
           <Route path="/financeiro" element={<FinancePage />} />
+          <Route path="/rentabilidade" element={<ProfitabilityPage />} />
           <Route path="/metas" element={<GoalsPage />} />
           <Route path="/agentes" element={<AgentsPage />} />
           <Route path="/agentes/whatsapp" element={<WhatsAppAgentPage />} />

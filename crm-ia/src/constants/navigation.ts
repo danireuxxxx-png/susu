@@ -1,10 +1,12 @@
 import {
+  Boxes,
   Building2,
   CalendarCheck,
   Contact2,
   LayoutDashboard,
   MessageSquareText,
   Newspaper,
+  PiggyBank,
   Settings,
   Sparkles,
   Target,
@@ -37,6 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { label: 'Leads', href: '/leads', icon: Contact2 },
       { label: 'Clientes', href: '/clientes', icon: Users },
       { label: 'Empresas', href: '/empresas', icon: Building2 },
+      { label: 'Projetos', href: '/projetos', icon: Boxes },
       { label: 'Atividades', href: '/atividades', icon: CalendarCheck },
     ],
   },
@@ -44,6 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Resultado',
     items: [
       { label: 'Financeiro', href: '/financeiro', icon: Wallet },
+      { label: 'Rentabilidade', href: '/rentabilidade', icon: PiggyBank },
       { label: 'Metas', href: '/metas', icon: Target },
     ],
   },

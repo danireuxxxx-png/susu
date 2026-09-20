@@ -283,3 +283,116 @@ export interface PipelineStage {
   probability: number
   kind: 'aberto' | 'ganho' | 'perdido'
 }
+
+// =====================================================================
+// Rentabilidade — o que o motor de unit economics devolve
+// =====================================================================
+
+export type ProjectStatus = 'proposto' | 'onboarding' | 'ativo' | 'pausado' | 'concluido' | 'cancelado'
+
+export type CostCategory =
+  | 'AI_API'
+  | 'HOSTING'
+  | 'VPS'
+  | 'DATABASE'
+  | 'STORAGE'
+  | 'DOMAIN'
+  | 'EMAIL'
+  | 'WHATSAPP_API'
+  | 'SMS'
+  | 'AUTOMATION'
+  | 'THIRD_PARTY_API'
+  | 'SOFTWARE'
+  | 'INFRASTRUCTURE'
+  | 'SUPPORT'
+  | 'HUMAN_RESOURCE'
+  | 'MARKETING'
+  | 'OTHER'
+
+export type CostType = 'FIXED' | 'VARIABLE' | 'USAGE_BASED'
+
+export type BillingPeriod =
+  | 'DAILY'
+  | 'WEEKLY'
+  | 'MONTHLY'
+  | 'QUARTERLY'
+  | 'SEMIANNUAL'
+  | 'YEARLY'
+  | 'ONE_TIME'
+
+export interface ProjectEconomics {
+  id: ID
+  name: string
+  companyId: ID
+  companyName: string
+  status: ProjectStatus
+  startedAt: string | null
+  monthlyRevenue: number
+  monthlyCost: number
+  monthlyProfit: number
+  margin: number
+  costEntries: number
+}
+
+export interface ProjectCostLine {
+  id: ID
+  projectId: ID
+  name: string
+  description: string
+  category: CostCategory
+  provider: string
+  costType: CostType
+  amount: number
+  billingPeriod: BillingPeriod
+  /** Valor já normalizado para a base mensal pelo backend. */
+  monthlyAmount: number
+  startDate: string | null
+  endDate: string | null
+}
+
+export interface ProjectService {
+  id: ID
+  projectId: ID
+  name: string
+  price: number
+  billingType: string
+}
+
+export interface ProjectDetail extends ProjectEconomics {
+  annual: { revenue: number; cost: number; profit: number }
+  costs: ProjectCostLine[]
+  services: ProjectService[]
+}
+
+export interface CustomerProfitability {
+  companyId: ID
+  companyName: string
+  projectsTotal: number
+  projectsActive: number
+  monthlyRevenue: number
+  monthlyCost: number
+  monthlyProfit: number
+  margin: number
+  annualRevenue: number
+  annualProfit: number
+}
+
+export interface CostBreakdownRow {
+  key: string
+  label: string
+  scope: 'PROJECT' | 'ORGANIZATION'
+  entries: number
+  monthlyAmount: number
+}
+
+export interface OperationEconomics {
+  mrr: number
+  arr: number
+  projectCost: number
+  operatingCost: number
+  totalCost: number
+  grossProfit: number
+  grossMargin: number
+  netProfit: number
+  netMargin: number
+}

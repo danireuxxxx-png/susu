@@ -39,8 +39,10 @@ React Router · date-fns · lucide-react.
 | `/leads` | Tabela de leads com abas por status, filtros e CRUD |
 | `/clientes` | Carteira em cards ou tabela, MRR/ARR/LTV e saúde da conta |
 | `/empresas` · `/empresas/:id` | Cadastro completo, contatos, negócios, histórico e inteligência do cliente |
+| `/projetos` · `/projetos/:id` | Projetos entregues com receita, custo, lucro e margem; linhas de custo editáveis e quebra por categoria |
 | `/atividades` | Agenda com calendário, tipos de atividade e conclusão de tarefas |
 | `/financeiro` | Receita, custo, lucro, margem, MRR/ARR e resultado por cliente |
+| `/rentabilidade` | Cliente × receita × custo × lucro × margem, ordenável, com custo por categoria e por fornecedor |
 | `/metas` | Meta mensal e metas comerciais com progresso |
 | `/agentes` · `/agentes/whatsapp` | Catálogo dos agentes e simulação do agente de WhatsApp |
 | `/jornal-matinal` | Briefing executivo diário gerado pela IA (mock) |
@@ -92,7 +94,8 @@ No modo conectado:
 - a tela de login troca e-mail e senha por uma sessão do Supabase Auth (a senha nunca é guardada no navegador — só os tokens);
 - o token é renovado automaticamente quando expira, e uma renovação atende todas as chamadas em voo;
 - `src/services/backend.service.ts` monta o snapshot do workspace com chamadas paralelas e `src/services/mappers.ts` traduz o modelo da API para os tipos que as telas já usam;
-- as mutações (criar lead, mover oportunidade, agendar atividade, ajustar meta) vão para a API, e os cálculos financeiros vêm prontos do backend — o frontend não soma nada por conta própria.
+- as mutações (criar lead, mover oportunidade, agendar atividade, lançar custo, ajustar meta) vão para a API, e os cálculos financeiros vêm prontos do backend — o frontend não soma nada por conta própria;
+- lançar um custo de R$ 1.200/ano no projeto faz o backend normalizar para R$ 100/mês e a margem se ajustar na hora.
 
 ## Arquitetura
 

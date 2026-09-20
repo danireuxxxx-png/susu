@@ -9,6 +9,7 @@ import { buildGoals } from './goals'
 import { buildLeads } from './leads'
 import { NOTIFICATIONS } from './notifications'
 import { buildOpportunities } from './opportunities'
+import { buildProjects } from './projects'
 import { createRng } from './seed'
 import { CURRENT_USER, TEAM } from './team'
 import { WHATSAPP_AGENT_STATUS, WHATSAPP_CONVERSATIONS, WHATSAPP_STATS } from './whatsapp'
@@ -53,6 +54,7 @@ function createDatabase() {
 
   linkCommercialData(companies, customers, opportunities)
 
+  const delivery = buildProjects(rng, customers, finance.byCustomer)
   const currentRevenue = finance.monthly[finance.monthly.length - 1]!.revenue
   const goals = buildGoals(customers, opportunities, activities, currentRevenue)
   const briefing = buildBriefing(opportunities, activities, leads)
@@ -64,6 +66,9 @@ function createDatabase() {
     leads,
     activities,
     finance,
+    projects: delivery.projects,
+    projectCosts: delivery.costs,
+    projectServices: delivery.services,
     goals,
     briefing,
     agents: AI_AGENTS,
