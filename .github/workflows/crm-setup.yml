@@ -46,8 +46,9 @@ jobs:
       run:
         working-directory: crm-ia-api
     env:
-      # Conexão DIRETA do Supabase (porta 5432): migrations são DDL em
-      # transação, o que o pooler em modo transaction não aceita.
+      # Session pooler do Supabase (porta 5432): migrations são DDL em
+      # transação, o que o Transaction pooler (6543) não aceita — e a
+      # conexão direta só existe em IPv6, que o runner do GitHub não tem.
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
       DATABASE_SSL: require
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

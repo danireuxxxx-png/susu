@@ -69,23 +69,35 @@ npm ci
 
    | Valor | Onde | Usado em |
    |---|---|---|
-   | URI **direta** (porta `5432`) | aba *Direct connection* | migrations (passo 2) |
-   | URI do **pooler** (porta `6543`) | aba *Transaction pooler* | a API em produção |
+   | URI do **Session pooler** (porta `5432`) | aba *Session pooler* | migrations pelo GitHub ou de rede sem IPv6 |
+   | URI **direta** (porta `5432`) | aba *Direct connection* | migrations da sua máquina, se ela tem IPv6 |
+   | URI do **Transaction pooler** (porta `6543`) | aba *Transaction pooler* | a API em produção |
 
-   Troque `[YOUR-PASSWORD]` pela senha do passo 1 nas duas.
+   Troque `[YOUR-PASSWORD]` pela senha do passo 1 em todas.
 
-   **Project Settings → API**
+   Se a aba *Connection string* não aparecer, o botão **Connect**, no topo do
+   projeto, abre a mesma lista.
 
-   | Valor | Observação |
-   |---|---|
-   | `Project URL` | `https://<ref>.supabase.co` |
-   | `anon public` | pública, pode ir ao navegador |
-   | `service_role` | **ignora RLS** — só no servidor, nunca no frontend |
-   | `JWT Secret` (em *JWT Settings*) | valida o token sem ida à rede a cada request |
+   **Project Settings → API** (a `Project URL`) e **→ API Keys** (as chaves)
 
-> Por que duas connection strings: a direta aceita DDL em transação (é o que
-> as migrations fazem); o pooler em modo *transaction* não aceita, mas aguenta
-> muito mais conexões simultâneas — que é o que a API precisa.
+   | Valor | Onde | Observação |
+   |---|---|---|
+   | `Project URL` | *API* | `https://<ref>.supabase.co` |
+   | `anon` / `publishable` | *API Keys* — se houver a aba *Legacy API keys*, é a `anon public` que está lá | pública, pode ir ao navegador |
+   | `service_role` / `secret` | mesma página, ao lado (precisa clicar para revelar) | **ignora RLS** — só no servidor, nunca no frontend |
+   | `JWT Secret` | *JWT Keys* (ou *API → JWT Settings*) | **opcional**, veja abaixo |
+
+   > **Sobre o `JWT Secret`:** ele só serve para validar o token sem ida à rede.
+   > Projetos novos assinam com chave assimétrica (ECC/RSA) e talvez nem mostrem
+   > um segredo — nesse caso **deixe em branco**, que a API valida pelo Supabase.
+   > Se você configurar um segredo que não corresponde à assinatura em uso, a API
+   > detecta e cai para a validação pela rede em vez de recusar o login.
+
+> Por que três: as migrations são DDL em transação, que o *Transaction pooler*
+> (`6543`) não aceita — elas precisam da conexão direta ou do *Session pooler*.
+> A API é o contrário: quer o `6543`, que aguenta muito mais conexões. E entre
+> as duas primeiras, o *Session pooler* é o que funciona de qualquer rede: a
+> conexão direta só existe em IPv6, que o GitHub Actions não tem.
 
 ---
 
@@ -106,10 +118,10 @@ por e-mail, chat ou pela sua máquina.
 
    | Secret | Valor (do passo 1) |
    |---|---|
-   | `SUPABASE_DB_URL` | connection string **direta** (porta `5432`), com a senha |
+   | `SUPABASE_DB_URL` | URI do **Session pooler** (porta `5432`), com a senha — a direta não funciona aqui, o GitHub não tem IPv6 |
    | `SUPABASE_URL` | `https://<ref>.supabase.co` |
    | `SUPABASE_ANON_KEY` | chave `anon` |
-   | `SUPABASE_SERVICE_ROLE_KEY` | chave `service_role` |
+   | `SUPABASE_SERVICE_ROLE_KEY` | chave `service_role` (ou `secret`) |
    | `OWNER_EMAIL` | o e-mail com que você vai entrar no CRM |
    | `OWNER_PASSWORD` | a senha que você quer usar (mínimo 8 caracteres) |
 
@@ -136,12 +148,14 @@ cp .env.example .env
 Preencha o `.env` com a connection string **direta** e as chaves do passo 1:
 
 ```ini
+# Direta se sua rede tem IPv6; senão, a do Session pooler (também 5432).
 DATABASE_URL=postgresql://postgres:SENHA@db.<ref>.supabase.co:5432/postgres
 DATABASE_SSL=require
 SUPABASE_URL=https://<ref>.supabase.co
 SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_JWT_SECRET=...
+# Só se o projeto ainda usa o segredo JWT antigo (HS256); veja o passo 1.
+SUPABASE_JWT_SECRET=
 ```
 
 O `.env` está no `.gitignore` — ele não é versionado.
@@ -360,9 +374,9 @@ O usuário não tem organização. Rode o passo 2 de novo (é idempotente).
 Você usou o pooler (`6543`). Migrations pedem a conexão direta (`5432`).
 
 **`ENETUNREACH` ao conectar no banco**
-A conexão direta do Supabase é IPv6. Se sua rede não tem IPv6, use a URI do
-*Session pooler* (também porta `5432`, mas com host `...pooler.supabase.com`)
-para rodar as migrations.
+A conexão direta do Supabase só existe em IPv6. Se sua rede não tem IPv6 — é o
+caso do GitHub Actions — use a URI do *Session pooler*: também porta `5432`,
+mas com host `...pooler.supabase.com`.
 
 **A primeira chamada do dia demora ~30s**
 Plano gratuito do Render hiberna o serviço. É esperado; o plano pago resolve.

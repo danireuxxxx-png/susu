@@ -47,9 +47,27 @@ export function verifyJwtLocally(token: string, secret: string): TokenClaims {
   return claims
 }
 
-/** Valida o token: localmente quando há segredo, senão pelo Supabase. */
+/** Algoritmo declarado no token, sem confiar no conteúdo ainda. */
+function readAlgorithm(token: string): string | undefined {
+  const [header] = token.split('.')
+  if (!header) return undefined
+  try {
+    return (JSON.parse(base64UrlDecode(header).toString('utf8')) as { alg?: string }).alg
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Valida o token: localmente quando dá, senão pelo Supabase.
+ *
+ * Projetos novos do Supabase assinam com chave assimétrica (ES256/RS256),
+ * onde não existe segredo compartilhado para conferir. Em vez de recusar
+ * todo mundo quando SUPABASE_JWT_SECRET estiver configurado por engano, a
+ * validação cai para a rede — mais lenta, mas correta.
+ */
 export async function resolveToken(token: string): Promise<TokenClaims> {
-  if (env.SUPABASE_JWT_SECRET) {
+  if (env.SUPABASE_JWT_SECRET && readAlgorithm(token) === 'HS256') {
     return verifyJwtLocally(token, env.SUPABASE_JWT_SECRET)
   }
 
