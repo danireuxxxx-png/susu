@@ -128,13 +128,19 @@ por e-mail, chat ou pela sua máquina.
 2. Aba **Actions → CRM — banco → Run workflow**
 3. Em *O que fazer*, escolha **setup**, ajuste o nome da empresa e confirme.
 
+   Antes disso, a ação **diagnostico** responde a pergunta mais comum —
+   *já cadastrei tudo?* — listando cada secret como ✅ ou ❌, sem mostrar
+   valor nenhum.
+
 O log mostra cada migration aplicada, a conferência de RLS (`0 sem RLS`) e o
 login funcionando de ponta a ponta. Se faltar algum segredo, o primeiro passo
 para e diz qual.
 
 > O botão *Run workflow* só aparece depois que este arquivo de workflow estiver
-> no branch padrão do repositório — ou seja, depois que a PR for mesclada.
-> Antes disso, use o caminho B.
+> no branch padrão do repositório — ou seja, depois que a PR for mesclada. Antes
+> disso, o mesmo workflow roda por tag: `git tag banco-setup && git push origin
+> banco-setup` dispara a instalação a partir de qualquer branch (acrescente um
+> sufixo — `banco-setup-2` — para repetir uma tag já usada).
 
 Depois, o mesmo workflow serve de manutenção: **status** lista o que já foi
 aplicado e **migrate** aplica migrations novas, sem tocar em mais nada.
