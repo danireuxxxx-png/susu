@@ -103,7 +103,7 @@ STATIC_EXPORT=1 npm run build   # gera out/
 node scripts/prepare-preview.mjs
 ```
 
-O script faz três ajustes exigidos pelo host do preview, nenhum deles
+O script faz quatro ajustes exigidos pelo host do preview, nenhum deles
 necessário em um deploy de verdade:
 
 1. move `out/_next` para `out/assets/_next`, casando com o `assetPrefix`
@@ -118,6 +118,25 @@ necessário em um deploy de verdade:
    cru é indistinguível de mojibake para um pipeline de publicação. Dentro de
    uma string JS, `"\uFFFD"` é exatamente o mesmo valor — a reescrita é
    sem perda.
+
+4. embute a folha de estilo em cada página. O export a referencia como
+   `/assets/…`, absoluto a partir da raiz do domínio, o que só resolve se o
+   site for dono dessa raiz. Embutida, a página fica estilizada onde quer
+   que seja montada.
+
+**Só a folha de estilo.** Reescrever os atributos `href`/`src` para caminhos
+relativos foi tentado e revertido: o React 19 hidrata o `<head>`, e mudar a
+URL de um script ou link ali é um mismatch do qual ele não se recupera — a
+página renderiza e nunca fica interativa, em silêncio, sem erro no console.
+Manter esses atributos exatamente como o Next os emitiu é a restrição em
+volta da qual todo o resto trabalha.
+
+Em troca, o site ganhou uma rede de proteção que vale em produção também: se
+o JavaScript não chegar (CDN bloqueada, chunk que falha, conexão ruim), um
+temporizador de 2,5s libera o conteúdo que as animações de entrada mantêm em
+`opacity: 0`. Sem isso o visitante veria um cabeçalho estilizado sobre uma
+página em branco — bem mais quebrado do que uma página sem animação. O mesmo
+vale via `<noscript>` quando o script está desligado.
 
 O build padrão (`npm run build`) segue sendo um build de servidor Next.js, com
 otimização de imagem — é ele que vai para produção.
@@ -167,7 +186,18 @@ só fica ativo enquanto a seção está perto da viewport.
 **`prefers-reduced-motion`** desliga tudo: um bloco global em `globals.css`
 colapsa as animações para o estado final, o cursor não é renderizado, a
 transição de página some e o showcase deixa de fixar (vira seções
-empilhadas). Nada fica invisível por causa de uma animação que não rodou.
+empilhadas).
+
+E se o JavaScript não rodar — desligado ou simplesmente não carregado — um
+`<noscript>` e um temporizador de 2,5s liberam o conteúdo que as animações
+de entrada mantêm em `opacity: 0`. (Uma versão anterior deste README dizia
+que isso já era verdade; não era: sem JS a página renderizava em branco.)
+
+Um detalhe que custou caro e vale registrar: as animações de entrada usam
+`animation-fill-mode: backwards`, nunca `both`. Com `both` o elemento mantém
+o keyframe final aplicado para sempre, e mesmo um keyframe que termina em
+`transform: none` computa como matriz identidade — o que o torna bloco
+contenedor de todos os seus descendentes `position: fixed`.
 
 ### Acessibilidade
 

@@ -10,6 +10,15 @@ import { Cursor } from "@/components/layout/cursor";
 import { PageTransition } from "@/components/layout/page-transition";
 import { store } from "@/lib/store";
 import { SITE_URL } from "@/lib/site";
+import { HydrationFlag } from "@/components/layout/hydration-flag";
+
+/**
+ * Entrance animations start at `opacity: 0` as an inline style, so a page
+ * whose JavaScript never runs renders blank. This puts the content back —
+ * an inline style can only be overridden with `!important`.
+ */
+const REVEAL_FALLBACK_CSS =
+  '[style*="opacity:0"],[style*="opacity: 0"]{opacity:1!important;transform:none!important}';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -86,6 +95,32 @@ export default function RootLayout({
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body className="antialiased">
+        {/*
+          Entrance animations start at `opacity: 0` as an inline style, which
+          means that without scripting the page renders blank. This puts the
+          content back — an inline style can only be beaten by `!important`.
+        */}
+        <noscript>
+          <style>{REVEAL_FALLBACK_CSS}</style>
+        </noscript>
+
+        {/*
+          Same guarantee when scripting is *on* but the bundle never arrives —
+          a blocked CDN, a failed chunk, a flaky connection. Without this the
+          visitor gets a styled header above a blank page, which looks far
+          more broken than a page with no animation. Hydration clears the
+          flag long before the timer fires.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              `setTimeout(function(){if(document.documentElement.dataset.hydrated)return;` +
+              `var s=document.createElement("style");s.textContent=${JSON.stringify(
+                REVEAL_FALLBACK_CSS,
+              )};document.head.appendChild(s)},2500)`,
+          }}
+        />
+
         <script
           type="application/ld+json"
           // Static, author-controlled object — no user input reaches it.
@@ -95,6 +130,7 @@ export default function RootLayout({
         />
 
         <CartProvider>
+          <HydrationFlag />
           <Cursor />
           <Header />
           <main id="conteudo">
