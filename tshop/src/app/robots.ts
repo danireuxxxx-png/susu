@@ -1,5 +1,9 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "./layout";
+import { SITE_URL } from "@/lib/site";
+
+/** Nothing here depends on the request — emit it once, at build time. */
+export const dynamic = "force-static";
+
 
 export default function robots(): MetadataRoute.Robots {
   return {

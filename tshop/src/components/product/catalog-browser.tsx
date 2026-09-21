@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, PackageOpen } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { ProductGrid } from "./product-grid";
@@ -19,15 +20,23 @@ const SORTS: { value: Sort; label: string }[] = [
 export function CatalogBrowser({
   products,
   brands,
-  initialBrand,
 }: {
   products: Product[];
   brands: string[];
-  initialBrand?: string;
 }) {
-  const [brand, setBrand] = useState<string | null>(
-    initialBrand && brands.includes(initialBrand) ? initialBrand : null,
-  );
+  /*
+   * The brand can arrive in the URL (`/smartphones?marca=Apple`, from the
+   * header). It is *derived* from the query string until the visitor touches
+   * a chip, at which point their choice takes over — no effect, so there is
+   * no render where the wrong set is on screen.
+   */
+  const params = useSearchParams();
+  const fromUrl = params.get("marca");
+  const urlBrand = fromUrl && brands.includes(fromUrl) ? fromUrl : null;
+  const [chosen, setChosen] = useState<string | null | undefined>(undefined);
+  const brand = chosen === undefined ? urlBrand : chosen;
+  const setBrand = setChosen;
+
   const [sort, setSort] = useState<Sort>("relevancia");
   const [inStockOnly, setInStockOnly] = useState(false);
 

@@ -9,13 +9,7 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { Cursor } from "@/components/layout/cursor";
 import { PageTransition } from "@/components/layout/page-transition";
 import { store } from "@/lib/store";
-
-/**
- * Set this to the production origin before launch — canonical URLs, Open
- * Graph images and the sitemap all resolve against it.
- */
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://tshop.com.br";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

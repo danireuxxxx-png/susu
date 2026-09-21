@@ -93,6 +93,37 @@ npm run typecheck
 
 ---
 
+## Preview estático
+
+Além do build normal (servidor), há um modo de exportação estática usado para
+gerar um preview compartilhável:
+
+```bash
+STATIC_EXPORT=1 npm run build   # gera out/
+node scripts/prepare-preview.mjs
+```
+
+O script faz três ajustes exigidos pelo host do preview, nenhum deles
+necessário em um deploy de verdade:
+
+1. move `out/_next` para `out/assets/_next`, casando com o `assetPrefix`
+   definido em `next.config.ts` — o host reserva caminhos de primeiro nível
+   começando com `_`;
+2. remove as entradas reservadas na raiz (payloads de prefetch do segmento e
+   a rota `_not-found`); o custo é só o prefetch de links, já que o Next cai
+   para navegação normal, e `404.html` continua cobrindo rotas desconhecidas;
+3. escapa `U+FFFD` literais no JavaScript emitido. O polyfill de decodificação
+   de URL do Next os contém de propósito (é o que `decodeURIComponent`
+   devolve para uma sequência malformada), mas um caractere de substituição
+   cru é indistinguível de mojibake para um pipeline de publicação. Dentro de
+   uma string JS, `"\uFFFD"` é exatamente o mesmo valor — a reescrita é
+   sem perda.
+
+O build padrão (`npm run build`) segue sendo um build de servidor Next.js, com
+otimização de imagem — é ele que vai para produção.
+
+---
+
 ## Arquitetura
 
 ```

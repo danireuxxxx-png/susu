@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { CatalogBrowser } from "@/components/product/catalog-browser";
 import { Reveal } from "@/components/ui/reveal";
 import { products } from "@/lib/products";
@@ -33,7 +34,9 @@ export default function AcessoriosPage() {
         </Reveal>
       </header>
 
-      <CatalogBrowser products={list} brands={[]} />
+      <Suspense fallback={null}>
+        <CatalogBrowser products={list} brands={[]} />
+      </Suspense>
     </div>
   );
 }

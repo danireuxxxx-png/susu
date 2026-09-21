@@ -7,7 +7,7 @@ import { ProductGrid } from "@/components/product/product-grid";
 import { SectionTitle } from "@/components/ui/section-title";
 import { Reveal } from "@/components/ui/reveal";
 import { getProduct, products } from "@/lib/products";
-import { SITE_URL } from "@/app/layout";
+import { SITE_URL } from "@/lib/site";
 import { store } from "@/lib/store";
 
 type Params = { params: Promise<{ slug: string }> };

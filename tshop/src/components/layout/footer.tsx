@@ -110,20 +110,26 @@ export function Footer() {
           direitos reservados.
         </p>
 
+        {/*
+          Políticas formais (privacidade, termos) ainda não foram redigidas —
+          exigem o texto real da loja. Até lá estes links apontam para as
+          seções equivalentes em /sobre, que existem, em vez de rotas
+          inexistentes.
+        */}
         <ul className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-muted">
           <li>
-            <Link href="/politicas/privacidade" className="link-underline">
-              Privacidade
+            <Link href="/sobre#trocas" className="link-underline">
+              Trocas e devoluções
             </Link>
           </li>
           <li>
-            <Link href="/politicas/trocas" className="link-underline">
-              Trocas
+            <Link href="/sobre#garantia" className="link-underline">
+              Garantia
             </Link>
           </li>
           <li>
-            <Link href="/politicas/termos" className="link-underline">
-              Termos
+            <Link href="/sobre#entrega" className="link-underline">
+              Entrega
             </Link>
           </li>
         </ul>

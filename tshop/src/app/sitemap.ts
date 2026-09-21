@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { products } from "@/lib/products";
-import { SITE_URL } from "./layout";
+import { SITE_URL } from "@/lib/site";
+
+/** Nothing here depends on the request — emit it once, at build time. */
+export const dynamic = "force-static";
+
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { CatalogBrowser } from "@/components/product/catalog-browser";
 import { Reveal } from "@/components/ui/reveal";
+import { ProductCardSkeleton } from "@/components/ui/skeleton";
 import { products } from "@/lib/products";
 
 export const metadata: Metadata = {
@@ -11,12 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/smartphones" },
 };
 
-export default async function SmartphonesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ marca?: string }>;
-}) {
-  const { marca } = await searchParams;
+export default function SmartphonesPage() {
   const list = products.filter((p) => p.category === "smartphones");
   const brands = [...new Set(list.map((p) => p.brand))];
 
@@ -40,11 +37,20 @@ export default async function SmartphonesPage({
         </Reveal>
       </header>
 
-      <CatalogBrowser
-        products={list}
-        brands={brands}
-        initialBrand={marca}
-      />
+      <Suspense fallback={<CatalogFallback />}>
+        <CatalogBrowser products={list} brands={brands} />
+      </Suspense>
+    </div>
+  );
+}
+
+/** Same geometry as the real grid, so the swap shifts nothing. */
+function CatalogFallback() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
     </div>
   );
 }
