@@ -38,14 +38,14 @@ export function Footer() {
   const pending = unverifiedFields();
 
   return (
-    <footer className="mt-32 border-t border-line bg-elevated">
+    <footer className="mt-20 border-t border-line bg-elevated sm:mt-28 lg:mt-32">
       <Newsletter />
 
       <div className="shell grid gap-12 border-t border-line py-16 lg:grid-cols-[1.2fr_2fr] lg:gap-20">
         <div className="flex flex-col gap-6">
           <Link
             href="/"
-            className="text-2xl font-semibold tracking-[-0.045em]"
+            className="inline-flex min-h-11 items-center text-2xl font-semibold tracking-[-0.045em] sm:min-h-0"
           >
             {store.name}
             <span className="text-accent" aria-hidden>
@@ -62,7 +62,7 @@ export function Footer() {
               href={store.googleBusiness.value.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-start gap-2.5 text-ink-secondary transition-colors hover:text-ink"
+              className="group flex min-h-11 items-start gap-2.5 py-1 text-ink-secondary transition-colors hover:text-ink sm:min-h-0 sm:py-0"
             >
               <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden />
               <span className="link-underline">{storeAddressLine()}</span>
@@ -72,7 +72,7 @@ export function Footer() {
               href={store.instagram.value.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-ink-secondary transition-colors hover:text-ink"
+              className="flex min-h-11 items-center gap-2.5 text-ink-secondary transition-colors hover:text-ink sm:min-h-0"
             >
               <InstagramIcon className="size-4 shrink-0" />
               <span className="link-underline">
@@ -86,12 +86,12 @@ export function Footer() {
           {COLUMNS.map((column) => (
             <nav key={column.title} aria-label={column.title}>
               <h2 className="eyebrow mb-5">{column.title}</h2>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-1 sm:gap-3">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="link-underline text-sm text-ink-secondary transition-colors hover:text-ink"
+                      className="link-underline inline-flex min-h-11 items-center text-sm text-ink-secondary transition-colors hover:text-ink sm:min-h-0"
                     >
                       {link.label}
                     </Link>
@@ -116,19 +116,19 @@ export function Footer() {
           seções equivalentes em /sobre, que existem, em vez de rotas
           inexistentes.
         */}
-        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-muted">
+        <ul className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-ink-muted">
           <li>
-            <Link href="/sobre#trocas" className="link-underline">
+            <Link href="/sobre#trocas" className="link-underline inline-flex min-h-11 items-center sm:min-h-0">
               Trocas e devoluções
             </Link>
           </li>
           <li>
-            <Link href="/sobre#garantia" className="link-underline">
+            <Link href="/sobre#garantia" className="link-underline inline-flex min-h-11 items-center sm:min-h-0">
               Garantia
             </Link>
           </li>
           <li>
-            <Link href="/sobre#entrega" className="link-underline">
+            <Link href="/sobre#entrega" className="link-underline inline-flex min-h-11 items-center sm:min-h-0">
               Entrega
             </Link>
           </li>

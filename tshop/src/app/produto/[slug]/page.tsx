@@ -88,7 +88,7 @@ export default async function ProductPage({ params }: Params) {
   };
 
   return (
-    <div className="shell pt-28 sm:pt-32">
+    <div className="shell pt-28 pb-24 sm:pt-32 lg:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
@@ -101,7 +101,7 @@ export default async function ProductPage({ params }: Params) {
       <nav aria-label="Trilha de navegação" className="mb-10">
         <ol className="flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
           <li>
-            <Link href="/" className="link-underline hover:text-ink">
+            <Link href="/" className="link-underline inline-flex min-h-11 items-center hover:text-ink sm:min-h-0">
               Início
             </Link>
           </li>
@@ -113,7 +113,7 @@ export default async function ProductPage({ params }: Params) {
                   ? "/smartphones"
                   : "/acessorios"
               }
-              className="link-underline hover:text-ink"
+              className="link-underline inline-flex min-h-11 items-center hover:text-ink sm:min-h-0"
             >
               {product.category === "smartphones" ? "Smartphones" : "Acessórios"}
             </Link>

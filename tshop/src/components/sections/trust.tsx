@@ -28,7 +28,7 @@ const PILLARS = [
 export function Trust() {
   return (
     <section
-      className="bg-ink-surface py-28 text-on-ink sm:py-36"
+      className="bg-ink-surface py-20 text-on-ink sm:py-28 lg:py-36"
       aria-labelledby="trust-title"
     >
       <div className="shell">
@@ -46,7 +46,7 @@ export function Trust() {
           </Reveal>
         </div>
 
-        <ul className="mt-16 grid gap-10 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-12 grid gap-10 sm:mt-16 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
           {PILLARS.map((pillar, i) => (
             <Reveal as="li" key={pillar.title} delay={i * 90}>
               <pillar.icon
@@ -65,7 +65,7 @@ export function Trust() {
         </ul>
 
         <Reveal delay={200}>
-          <div className="mt-16 flex flex-wrap gap-3 border-t border-[color:var(--color-line-inverse)] pt-10">
+          <div className="mt-12 flex flex-wrap gap-3 border-t border-[color:var(--color-line-inverse)] pt-8 sm:mt-16 sm:pt-10">
             <ButtonLink
               href="/smartphones"
               size="lg"

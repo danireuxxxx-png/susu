@@ -109,7 +109,7 @@ export function SearchOverlay({
                     onClick={onClose}
                     className="group flex items-center gap-4 border-b border-line py-4 transition-[padding] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:pl-2"
                     style={{
-                      animation: `tsFadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms both`,
+                      animation: `tsFadeUp 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 55}ms backwards`,
                     }}
                   >
                     <div className="relative size-14 shrink-0 overflow-hidden rounded-md bg-surface p-1.5">

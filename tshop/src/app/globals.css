@@ -299,12 +299,23 @@
   }
 }
 
+/*
+ * `backwards`, never `both`.
+ *
+ * `both` leaves the final keyframe applied for good. Even a keyframe that
+ * ends at `transform: none` computes to an identity matrix, and any
+ * non-`none` transform turns the element into the containing block for its
+ * `position: fixed` descendants — which silently relocates every fixed
+ * overlay inside it. `backwards` still holds the opening state through the
+ * animation's delay; since these animations end where the element naturally
+ * sits, nothing is lost by letting the element go back to being itself.
+ */
 .ts-animate-fade-up {
-  animation: tsFadeUp 1s var(--ease-out-expo) both;
+  animation: tsFadeUp 1s var(--ease-out-expo) backwards;
 }
 
 .ts-animate-fade {
-  animation: tsFade 1.2s var(--ease-out-soft) both;
+  animation: tsFade 1.2s var(--ease-out-soft) backwards;
 }
 
 .ts-sheen::after {

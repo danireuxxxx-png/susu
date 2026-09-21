@@ -52,7 +52,7 @@ export function Header() {
 
   return (
     <>
-      <a href="#conteudo" className="sr-only-focusable z-[100] m-4 rounded-full bg-ink px-5 py-3 text-sm text-on-ink">
+      <a href="#conteudo" className="sr-only-focusable z-[100] m-4 inline-flex min-h-11 items-center rounded-full bg-ink px-5 text-sm text-on-ink">
         Pular para o conteúdo
       </a>
 
@@ -68,7 +68,7 @@ export function Header() {
         <div className="shell flex h-full items-center justify-between gap-6">
           <Link
             href="/"
-            className="shrink-0 text-[1.0625rem] font-semibold tracking-[-0.04em]"
+            className="-ml-2 inline-flex h-11 shrink-0 items-center px-2 text-[1.0625rem] font-semibold tracking-[-0.04em]"
             aria-label={`${store.name} — página inicial`}
           >
             {store.name}
@@ -158,7 +158,7 @@ export function Header() {
                   style={{
                     animation: `tsFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) ${
                       i * 45 + 80
-                    }ms both`,
+                    }ms backwards`,
                   }}
                 >
                   {item.label}
@@ -171,7 +171,7 @@ export function Header() {
             href={store.instagram.value.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="link-underline mt-8 inline-block text-sm text-ink-secondary"
+            className="link-underline mt-6 inline-flex min-h-11 items-center text-sm text-ink-secondary"
           >
             @{store.instagram.value.handle}
           </a>

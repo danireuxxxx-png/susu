@@ -41,7 +41,7 @@ const FEATURES = [
 export function Features() {
   return (
     <section
-      className="shell py-28 sm:py-36"
+      className="shell py-20 sm:py-28 lg:py-36"
       aria-labelledby="features-title"
     >
       <SectionTitle
@@ -55,12 +55,12 @@ export function Features() {
         className="max-w-2xl"
       />
 
-      <ul className="mt-16 grid gap-4 sm:mt-20 sm:grid-cols-2 sm:gap-6">
+      <ul className="mt-12 grid gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:mt-20">
         {FEATURES.map((feature, i) => (
           <Reveal as="li" key={feature.eyebrow} delay={i * 90} className="flex">
             <article
               className={cn(
-                "group flex w-full flex-col gap-6 rounded-xl border border-line bg-elevated p-8 sm:p-10",
+                "group flex w-full flex-col gap-6 rounded-xl border border-line bg-elevated p-7 sm:p-10",
                 "transition-[border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
                 "hover:-translate-y-1 hover:border-line-strong hover:shadow-medium",
                 "motion-reduce:hover:translate-y-0",

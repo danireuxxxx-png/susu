@@ -67,7 +67,13 @@ export function CatalogBrowser({
 
   return (
     <>
-      <div className="sticky top-14 z-30 -mx-6 border-y border-line bg-canvas/85 px-6 py-4 backdrop-blur-xl sm:top-16 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16">
+      {/*
+        The full-bleed negative margin has to track `.shell`'s own gutter
+        exactly, and `.shell` switches at 768px and 1280px — `md` and `xl`,
+        not `sm` and `lg`. Using the wrong pair pushes this bar 24px past the
+        viewport between those breakpoints.
+      */}
+      <div className="sticky top-14 z-30 -mx-6 border-y border-line bg-canvas/85 px-6 py-4 backdrop-blur-xl sm:top-16 md:-mx-10 md:px-10 xl:-mx-16 xl:px-16">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {/* Brand filter */}
           <div className="flex items-center gap-3 overflow-x-auto pb-1 lg:pb-0">
@@ -96,12 +102,12 @@ export function CatalogBrowser({
           </div>
 
           <div className="flex items-center gap-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-secondary">
+            <label className="flex min-h-11 shrink-0 cursor-pointer items-center gap-2 text-sm text-ink-secondary sm:min-h-0">
               <input
                 type="checkbox"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
-                className="size-4 rounded-sm border-line-strong accent-[color:var(--color-ink)]"
+                className="size-5 rounded-sm border-line-strong accent-[color:var(--color-ink)] sm:size-4"
               />
               Só disponíveis
             </label>
@@ -114,7 +120,7 @@ export function CatalogBrowser({
                 id="sort"
                 value={sort}
                 onChange={(e) => setSort(e.target.value as Sort)}
-                className="cursor-pointer rounded-full border border-line bg-elevated px-4 py-2 text-sm outline-none transition-colors hover:border-line-strong"
+                className="h-11 cursor-pointer rounded-full border border-line bg-elevated px-4 text-sm outline-none transition-colors hover:border-line-strong sm:h-10"
               >
                 {SORTS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -165,7 +171,7 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "shrink-0 rounded-full border px-4 py-2 text-sm",
+        "inline-flex h-11 shrink-0 items-center rounded-full border px-4 text-sm sm:h-10",
         "transition-[background-color,border-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
         active
           ? "border-ink bg-ink text-on-ink"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { Reveal } from "@/components/ui/reveal";
+import { Rail } from "@/components/ui/rail";
 import { ProductImage } from "@/components/product/product-image";
 import { Price } from "@/components/ui/price";
 import { ButtonLink } from "@/components/ui/button";
@@ -17,7 +18,7 @@ export function Offers({ products }: { products: Product[] }) {
   const [lead, ...rest] = products;
 
   return (
-    <section className="shell py-28 sm:py-36" aria-labelledby="offers-title">
+    <section className="shell py-20 sm:py-28 lg:py-36" aria-labelledby="offers-title">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-4">
           <Reveal>
@@ -36,7 +37,7 @@ export function Offers({ products }: { products: Product[] }) {
         <Reveal delay={160}>
           <Link
             href="/ofertas"
-            className="link-underline inline-flex items-center gap-2 text-sm text-ink-secondary transition-colors hover:text-ink"
+            className="link-underline inline-flex min-h-11 items-center gap-2 text-sm text-ink-secondary transition-colors hover:text-ink sm:min-h-0"
           >
             Ver todas as ofertas
             <ArrowRight className="size-4" aria-hidden />
@@ -44,7 +45,7 @@ export function Offers({ products }: { products: Product[] }) {
         </Reveal>
       </div>
 
-      <div className="mt-14 grid gap-4 sm:gap-6 lg:grid-cols-[1.35fr_1fr]">
+      <div className="mt-10 grid gap-4 sm:mt-14 sm:gap-6 lg:grid-cols-[1.35fr_1fr]">
         {/* Lead offer: full-bleed stage, product at scale. */}
         <Reveal>
           <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface">
@@ -91,8 +92,12 @@ export function Offers({ products }: { products: Product[] }) {
           </article>
         </Reveal>
 
-        {/* Supporting offers: a compact list, ranked. */}
-        <div className="flex flex-col gap-4 sm:gap-6">
+        {/* Supporting offers: a rail on phones, a ranked column on desktop. */}
+        <Rail
+          label="Outras ofertas"
+          gridClassName="sm:flex sm:flex-col sm:gap-4 lg:gap-6"
+          itemClassName="sm:flex-1"
+        >
           {rest.slice(0, 3).map((product, i) => (
             <Reveal key={product.slug} delay={(i + 1) * 90} className="flex-1">
               <article className="group relative flex h-full items-center gap-5 overflow-hidden rounded-xl border border-line bg-elevated p-5 transition-[border-color,box-shadow,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-line-strong hover:shadow-medium motion-reduce:hover:translate-y-0 sm:p-6">
@@ -129,11 +134,11 @@ export function Offers({ products }: { products: Product[] }) {
               </article>
             </Reveal>
           ))}
-        </div>
+        </Rail>
       </div>
 
       <Reveal delay={240}>
-        <p className="mt-10 max-w-[52ch] text-sm text-ink-muted">
+        <p className="mt-8 max-w-[52ch] text-sm text-ink-muted sm:mt-10">
           Condições válidas enquanto durarem os estoques. Consulte a loja
           para prazos, formas de pagamento e disponibilidade de cada
           configuração.

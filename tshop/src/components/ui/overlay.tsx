@@ -146,10 +146,10 @@ export function Overlay({
           </h2>
           <Button
             variant="icon"
-            size="sm"
+            size="md"
             onClick={onClose}
             aria-label="Fechar"
-            className={cn(hideTitle && "ml-auto")}
+            className={cn("-mr-2", hideTitle && "ml-auto")}
           >
             <X className="size-5" aria-hidden />
           </Button>

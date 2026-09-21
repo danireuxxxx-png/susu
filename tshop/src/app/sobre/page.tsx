@@ -79,7 +79,7 @@ export default function SobrePage() {
                   href={store.googleBusiness.value.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-underline"
+                  className="link-underline inline-flex min-h-11 items-center sm:min-h-0"
                 >
                   {storeAddressLine()}
                 </a>
@@ -104,7 +104,7 @@ export default function SobrePage() {
               </Detail>
 
               <Detail icon={Phone} label="Telefone">
-                <a href={`tel:${phone.e164}`} className="link-underline">
+                <a href={`tel:${phone.e164}`} className="link-underline inline-flex min-h-11 items-center sm:min-h-0">
                   {phone.display}
                 </a>
               </Detail>
@@ -112,7 +112,7 @@ export default function SobrePage() {
               <Detail icon={Mail} label="E-mail">
                 <a
                   href={`mailto:${store.email.value}`}
-                  className="link-underline"
+                  className="link-underline inline-flex min-h-11 items-center sm:min-h-0"
                 >
                   {store.email.value}
                 </a>
@@ -123,7 +123,7 @@ export default function SobrePage() {
                   href={store.instagram.value.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-underline"
+                  className="link-underline inline-flex min-h-11 items-center sm:min-h-0"
                 >
                   @{store.instagram.value.handle}
                 </a>

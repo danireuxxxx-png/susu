@@ -24,7 +24,7 @@ export default function HomePage() {
       <Features />
 
       {/* 4 — CATALOGUE: the pieces, finally shown together. */}
-      <section className="shell py-28 sm:py-36" aria-labelledby="catalog-title">
+      <section className="shell py-20 sm:py-28 lg:py-36" aria-labelledby="catalog-title">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionTitle
             eyebrow="Destaques"
@@ -34,10 +34,16 @@ export default function HomePage() {
           />
         </div>
 
-        <ProductGrid products={featuredProducts(6)} className="mt-14" />
+        {/* A curated shelf, so phones get a rail to swipe rather than six
+            full-height cards stacked into a scroll marathon. */}
+        <ProductGrid
+          products={featuredProducts(6)}
+          className="mt-10 sm:mt-14"
+          railOnMobile
+        />
 
         <Reveal delay={120}>
-          <div className="mt-12 flex justify-center">
+          <div className="mt-10 flex justify-center sm:mt-12">
             <ButtonLink href="/smartphones" variant="secondary" size="lg">
               Ver todos os aparelhos
             </ButtonLink>

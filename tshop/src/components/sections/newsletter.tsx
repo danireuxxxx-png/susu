@@ -74,12 +74,12 @@ export function Newsletter() {
                   placeholder="seu@email.com"
                   aria-invalid={state === "error"}
                   aria-describedby={state === "error" ? "newsletter-error" : undefined}
-                  className="w-full bg-transparent text-base outline-none placeholder:text-ink-faint"
+                  className="h-11 w-full bg-transparent text-base outline-none placeholder:text-ink-faint"
                 />
                 <Button
                   type="submit"
                   variant="icon"
-                  size="sm"
+                  size="md"
                   loading={state === "loading"}
                   aria-label="Inscrever-se"
                 >

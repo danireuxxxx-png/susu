@@ -184,7 +184,7 @@ export function QuantityStepper({
   max?: number;
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-full border border-line">
+    <div className="flex shrink-0 items-center rounded-full border border-line">
       <StepButton
         onClick={() => onChange(value - 1)}
         label={`Diminuir quantidade de ${label}`}
@@ -193,7 +193,7 @@ export function QuantityStepper({
         <Minus className="size-3.5" aria-hidden />
       </StepButton>
       <span
-        className="min-w-6 text-center text-sm tabular-nums"
+        className="min-w-7 text-center text-sm tabular-nums"
         aria-live="polite"
         aria-label={`Quantidade: ${value}`}
       >
@@ -227,7 +227,7 @@ function StepButton({
       onClick={onClick}
       aria-label={label}
       disabled={disabled}
-      className="grid size-8 place-items-center rounded-full text-ink transition-colors hover:bg-surface disabled:opacity-30 disabled:hover:bg-transparent"
+      className="grid size-11 place-items-center rounded-full text-ink transition-colors hover:bg-surface disabled:opacity-30 disabled:hover:bg-transparent sm:size-9"
     >
       {children}
     </button>

@@ -5,6 +5,7 @@ import type { Product } from "@/lib/types";
 import { ProductImage } from "@/components/product/product-image";
 import { ButtonLink } from "@/components/ui/button";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
+import { Rail } from "@/components/ui/rail";
 import { cn } from "@/lib/utils";
 
 /** The beats the device moves through as the section scrolls past. */
@@ -107,19 +108,50 @@ export function Showcase({ product }: { product: Product }) {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-surface"
+      className={cn(
+        "relative bg-surface",
+        /* The pinned, scroll-driven version is a desktop idea: it spends
+           three viewports of scroll to turn one object. On a phone that is
+           2.500px of thumb work, so the section keeps its natural height and
+           the chapters become a rail the visitor swipes instead. */
+        !reduced && "lg:min-h-[300vh]",
+      )}
       aria-labelledby="showcase-title"
-      style={{ minHeight: reduced ? undefined : "300vh" }}
     >
       <div
         className={cn(
-          "flex min-h-[100svh] items-center",
-          !reduced && "sticky top-0",
+          "flex items-center lg:min-h-[100svh]",
+          !reduced && "lg:sticky lg:top-0",
         )}
       >
-        <div className="shell grid w-full items-center gap-12 py-20 lg:grid-cols-2 lg:gap-16">
+        <div className="shell grid w-full items-center gap-8 py-16 sm:gap-12 sm:py-20 lg:grid-cols-2 lg:gap-16">
           {/* Chapters */}
-          <div className="relative order-2 lg:order-1 lg:min-h-[22rem]">
+          <div className="relative order-2 min-w-0 lg:order-1 lg:min-h-[22rem]">
+            {/* Phones: swipe through the chapters. */}
+            <Rail
+              label="Capítulos do produto"
+              className="lg:hidden"
+              gridClassName=""
+              itemClassName="flex-col gap-5"
+            >
+              {CHAPTERS.map((chapter, i) => (
+                <div key={chapter.title} className="flex flex-col gap-4">
+                  <p className="eyebrow flex items-center gap-3">
+                    <span aria-hidden className="inline-block h-px w-8 bg-accent" />
+                    {chapter.eyebrow}
+                  </p>
+                  <h2
+                    id={i === 0 ? "showcase-title-mobile" : undefined}
+                    className="text-h2"
+                  >
+                    {chapter.title}
+                  </h2>
+                  <p className="text-ink-secondary">{chapter.body}</p>
+                </div>
+              ))}
+            </Rail>
+
+            {/* Desktop: one chapter at a time, tied to scroll progress. */}
             {CHAPTERS.map((chapter, i) => {
               const isActive = reduced || i === active;
               return (
@@ -127,17 +159,15 @@ export function Showcase({ product }: { product: Product }) {
                   key={chapter.title}
                   aria-hidden={!isActive}
                   className={cn(
-                    "flex flex-col gap-5",
+                    "hidden flex-col gap-5 lg:flex",
                     reduced
-                      ? "mb-16"
+                      ? "lg:relative lg:mb-16"
                       : [
                           "lg:absolute lg:inset-x-0 lg:top-0",
                           "transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
                           isActive
                             ? "opacity-100 lg:translate-y-0"
                             : "opacity-0 lg:pointer-events-none lg:translate-y-6",
-                          // On small screens the chapters stack and all read.
-                          !isActive && "max-lg:hidden",
                         ],
                   )}
                 >
@@ -177,7 +207,7 @@ export function Showcase({ product }: { product: Product }) {
           {/* Subject */}
           <div className="order-1 flex justify-center lg:order-2">
             <div
-              className="aspect-[440/900] w-full max-w-[clamp(14rem,34vw,22rem)]"
+              className="aspect-[440/900] w-full max-w-[min(46vw,10.5rem)] max-lg:!transform-none sm:max-w-[15rem] lg:max-w-[clamp(14rem,34vw,22rem)]"
               style={
                 reduced
                   ? undefined
@@ -199,7 +229,7 @@ export function Showcase({ product }: { product: Product }) {
       </div>
 
       {/* Closing beat, after the pin releases. */}
-      <div className="shell relative flex justify-center pb-20">
+      <div className="shell relative flex justify-center pb-16 sm:pb-20">
         <ButtonLink href={`/produto/${product.slug}`} variant="secondary" size="lg">
           Conhecer o {product.name}
         </ButtonLink>

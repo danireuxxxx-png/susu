@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ShieldCheck, Truck } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useCart } from "@/hooks/use-cart";
@@ -14,7 +14,26 @@ export function ProductDetail({ product }: { product: Product }) {
   const [storageIndex, setStorageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+  const [buyBoxVisible, setBuyBoxVisible] = useState(true);
+  const buyBoxRef = useRef<HTMLDivElement>(null);
   const cart = useCart();
+
+  /*
+   * On a phone the buy box scrolls away after the first screen and the rest
+   * of the page — description, specs, related — has no way to buy. A sticky
+   * bar takes over exactly when the real one leaves the viewport, so there
+   * is never a moment with two "add to cart" buttons competing.
+   */
+  useEffect(() => {
+    const node = buyBoxRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setBuyBoxVisible(entry.isIntersecting),
+      { rootMargin: "-72px 0px 0px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const color = product.colors[colorIndex];
   const storage = product.storage[storageIndex];
@@ -142,7 +161,7 @@ export function ProductDetail({ product }: { product: Product }) {
         )}
 
         {/* Buy box --------------------------------------------------------- */}
-        <div className="flex flex-col gap-4 border-t border-line pt-8">
+        <div ref={buyBoxRef} className="flex flex-col gap-4 border-t border-line pt-8">
           {soldOut ? (
             <div className="rounded-lg border border-dashed border-line bg-surface p-6 text-center">
               <p className="font-medium">Indisponível no momento</p>
@@ -170,7 +189,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 <Button
                   size="lg"
                   onClick={addToCart}
-                  className="flex-1"
+                  className="w-full sm:w-auto sm:flex-1"
                   aria-live="polite"
                 >
                   {justAdded ? (
@@ -189,7 +208,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     addToCart();
                     cart.open();
                   }}
-                  className="flex-1"
+                  className="w-full sm:w-auto sm:flex-1"
                 >
                   Comprar agora
                 </Button>
@@ -224,6 +243,45 @@ export function ProductDetail({ product }: { product: Product }) {
           ))}
         </dl>
       </div>
+
+      {/* Sticky buy bar — phones only, and only once the real one is gone. */}
+      {!soldOut && (
+        <div
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas/95 backdrop-blur-xl lg:hidden",
+            "px-6 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3",
+            "transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+            buyBoxVisible ? "translate-y-full" : "translate-y-0",
+          )}
+          aria-hidden={buyBoxVisible}
+        >
+          <div className="flex items-center gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs text-ink-muted">
+                {color.name} · {storage.label}
+              </p>
+              <p className="text-lg font-semibold tabular-nums tracking-[-0.03em]">
+                {formatPrice(price)}
+              </p>
+            </div>
+            <Button
+              size="lg"
+              onClick={addToCart}
+              tabIndex={buyBoxVisible ? -1 : undefined}
+              className="shrink-0"
+            >
+              {justAdded ? (
+                <>
+                  <Check className="size-4" aria-hidden />
+                  Adicionado
+                </>
+              ) : (
+                "Adicionar"
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
